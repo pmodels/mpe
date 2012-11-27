@@ -1,4 +1,61 @@
 dnl
+dnl PAC_MPI_COMPILE_CC_FUNC( MPI_CC, MPI_CFLAGS,
+dnl                       HEADERS, MPI_VARS, MPI_FUNC,
+dnl                       [action if working], [action if not working] )
+dnl - MPI_CC     is the MPI parallel compiler, like mpich/mpicc, AIX/mpcc
+dnl - MPI_CFLAGS is the CFLAGS to MPI_CC, like "-I/usr/include" for mpi.h
+dnl - HEADERS    is the headers, e.g. <pthread.h>.
+dnl - MPI_VARS   is the the declaration of variables needed to call MPI_FUNC
+dnl - MPI_FUNC   is the body of MPI function call to be checked for existence
+dnl              e.g.  MPI_VARS="MPI_Request request; MPI_Fint a;"
+dnl                    MPI_FUNC="a = MPI_Request_c2f( request );"
+dnl              if MPI_FUNC is empty, assume linking with basic MPI program.
+dnl              i.e. check if MPI definitions are valid
+dnl
+AC_DEFUN(PAC_MPI_COMPILE_CC_FUNC,[
+dnl - set local parallel compiler environments
+dnl   so input variables can be CC, CFLAGS or LIBS
+    pac_MPI_CC="$1"
+    pac_MPI_CFLAGS="$2"
+dnl - save the original environment
+    pac_saved_CC="$CC"
+    pac_saved_CFLAGS="$CFLAGS"
+dnl - set the parallel compiler environment
+    AC_LANG_PUSH([C])
+    CC="$pac_MPI_CC"
+    CFLAGS="$pac_MPI_CFLAGS"
+    AC_COMPILE_IFELSE([
+        AC_LANG_PROGRAM([
+/* <stdlib.h> is included to get NULL defined */
+#if defined( STDC_HEADERS ) || defined( HAVE_STDLIB_H )
+#include <stdlib.h>
+#else
+#if !defined( NULL )
+#define NULL 0
+#endif
+#endif
+
+$3
+#include "mpi.h"
+
+        ],[
+    int argc; char **argv;
+    $4 ; 
+    MPI_Init(&argc, &argv);
+    $5 ;
+    MPI_Finalize();
+        ])
+    ],[pac_mpi_working=yes],[pac_mpi_working=no])
+    CC="$pac_saved_CC"
+    CFLAGS="$pac_saved_CFLAGS"
+    AC_LANG_POP([C])
+    if test "$pac_mpi_working" = "yes" ; then
+        ifelse([$6],,:,[$6])
+    else
+        ifelse([$7],,:,[$7])
+    fi
+])dnl
+dnl
 dnl PAC_MPI_LINK_CC_FUNC( MPI_CC, MPI_CFLAGS, MPI_LIBS,
 dnl                       HEADERS, MPI_VARS, MPI_FUNC,
 dnl                       [action if working], [action if not working] )

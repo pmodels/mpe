@@ -443,7 +443,7 @@ void Composite_free( DRAW_Composite *cmplx )
 /*  Actual TRACE-API implementation  */
 
 TRACE_EXPORT
-char *TRACE_Get_err_string( int ierr )
+const char *TRACE_Get_err_string( int ierr )
 {
     switch ( ierr ) {
         case 0:

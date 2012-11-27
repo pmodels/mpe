@@ -5,6 +5,15 @@ dnl
 define([AC_CACHE_LOAD], )dnl
 define([AC_CACHE_SAVE], )dnl
 dnl
+AH_BOTTOM([
+/* Define MPE_CONST=const if mpi.h uses const in MPI function declaration. */
+#if defined(HAVE_CONST_IN_MPI_DECL)
+#define MPE_CONST const
+#else
+#define MPE_CONST
+#endif
+])
+dnl
 dnl
 AC_INIT()
 AC_PREREQ(2.52)
@@ -321,6 +330,34 @@ if test "$enable_safePMPI" = "yes" ; then
     AC_DEFINE( MAKE_SAFE_PMPI_CALL, 1, [Define if safe PMPI calls are made] )
 else
     AC_MSG_RESULT(no)
+fi
+
+dnl Check if MPI implementation uses const in function declaration
+if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
+    if test "$enable_checkMPI" = "yes" ; then
+        AC_MSG_CHECKING( [for the use of const in MPI function declaration] )
+        PAC_MPI_COMPILE_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], [], [],
+                                 [
+int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
+             int dest, int tag, MPI_Comm comm)
+{
+    return 0;
+}
+                                 ],
+                                 [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+        if test "$mpe_link_ok" = "yes" ; then
+            AC_MSG_RESULT(yes)
+            AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
+        else
+            AC_MSG_RESULT(no)
+        fi
+    fi
+else
+dnl MPICH2 has MPI_Init_thread().
+    if test "$MPI_IMPL" = "MPICH2" ; then
+        AC_DEFINE(HAVE_MPI_INIT_THREAD, 1,
+                  [Define if MPI_Init_thread available])
+    fi
 fi
 
 dnl Check if Thread-support level in MPI implementation
@@ -1008,6 +1045,40 @@ dnl                 PAC_MSG_ERROR( $enable_softerror, [could NOT determine!] )
 dnl             fi
 dnl         fi
 dnl     fi
+
+dnl Check if MPICH-1's mpir_iargc() and mpir_getarg() are available
+# Invoke PROG_F77 here so MPI_LINK_F77_FUNC internal won't invoke PROG_F77.
+    AC_PROG_F77
+
+    AC_MSG_CHECKING( [for the Fortran version of mpir_iargc()] )
+    PAC_MPI_LINK_F77_FUNC( $MPI_F77, [$MPI_FFLAGS], $MPI_LIBS, [
+        integer ii
+    ], [
+        ii = mpir_iargc()
+    ],
+    [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+    if test "$mpe_link_ok" = "yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE([HAVE_MPIR_IARGC],1,
+                  [Define if mpir_iargc() is available.])
+    else
+        AC_MSG_RESULT(no)
+    fi
+    AC_MSG_CHECKING( [for the Fortran version of mpir_getarg()] )
+    PAC_MPI_LINK_F77_FUNC( $MPI_F77, [$MPI_FFLAGS], $MPI_LIBS, [
+        integer idx
+        character*80 str
+    ], [
+        call mpir_getarg( idx, str )
+    ],
+    [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+    if test "$mpe_link_ok" = "yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE([HAVE_MPIR_GETARG],1,
+                  [Define if mpir_iargc() is available.])
+    else
+        AC_MSG_RESULT(no)
+    fi
 
 dnl endif test "${F2CMPI_LIBS}" = "-l${F2CMPI_LIBNAME}"
 dnl         -a "$MPI_IMPL" != "MPICH2" ; then

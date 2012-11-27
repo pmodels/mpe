@@ -1551,7 +1551,7 @@ void MPE_Init_internal_logging( void )
 
 
 int   MPI_Allgather( sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcount;
 MPI_Datatype sendtype;
 void * recvbuf;
@@ -1590,12 +1590,12 @@ MPI_Comm comm;
 }
 
 int   MPI_Allgatherv( sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcount;
 MPI_Datatype sendtype;
 void * recvbuf;
-const int * recvcounts;
-const int * displs;
+MPE_CONST int * recvcounts;
+MPE_CONST int * displs;
 MPI_Datatype recvtype;
 MPI_Comm comm;
 {
@@ -1631,7 +1631,7 @@ MPI_Comm comm;
 }
 
 int   MPI_Allreduce( sendbuf, recvbuf, count, datatype, op, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 void * recvbuf;
 int count;
 MPI_Datatype datatype;
@@ -1670,7 +1670,7 @@ MPI_Comm comm;
 }
 
 int  MPI_Alltoall( sendbuf, sendcnt, sendtype, recvbuf, recvcnt, recvtype, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcnt;
 MPI_Datatype sendtype;
 void * recvbuf;
@@ -1724,13 +1724,13 @@ MPI_Comm comm;
 }
 
 int   MPI_Alltoallv( sendbuf, sendcnts, sdispls, sendtype, recvbuf, recvcnts, rdispls, recvtype, comm )
-const void * sendbuf;
-const int * sendcnts;
-const int * sdispls;
+MPE_CONST void * sendbuf;
+MPE_CONST int * sendcnts;
+MPE_CONST int * sdispls;
 MPI_Datatype sendtype;
 void * recvbuf;
-const int * recvcnts;
-const int * rdispls;
+MPE_CONST int * recvcnts;
+MPE_CONST int * rdispls;
 MPI_Datatype recvtype;
 MPI_Comm comm;
 {
@@ -1856,7 +1856,7 @@ MPI_Comm comm;
 }
 
 int MPI_Gather( sendbuf, sendcnt, sendtype, recvbuf, recvcount, recvtype, root, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcnt;
 MPI_Datatype sendtype;
 void * recvbuf;
@@ -1897,12 +1897,12 @@ MPI_Comm comm;
 }
 
 int MPI_Gatherv( sendbuf, sendcnt, sendtype, recvbuf, recvcnts, displs, recvtype, root, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcnt;
 MPI_Datatype sendtype;
 void * recvbuf;
-const int * recvcnts;
-const int * displs;
+MPE_CONST int * recvcnts;
+MPE_CONST int * displs;
 MPI_Datatype recvtype;
 int root;
 MPI_Comm comm;
@@ -2010,7 +2010,7 @@ MPI_Op * op;
 }
 
 int   MPI_Reduce_scatter( sendbuf, recvbuf, recvcnts, datatype, op, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 void * recvbuf;
 const int * recvcnts;
 MPI_Datatype datatype;
@@ -2050,7 +2050,7 @@ MPI_Comm comm;
 }
 
 int   MPI_Reduce( sendbuf, recvbuf, count, datatype, op, root, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 void * recvbuf;
 int count;
 MPI_Datatype datatype;
@@ -2090,7 +2090,7 @@ MPI_Comm comm;
 }
 
 int   MPI_Scan( sendbuf, recvbuf, count, datatype, op, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 void * recvbuf;
 int count;
 MPI_Datatype datatype;
@@ -2129,7 +2129,7 @@ MPI_Comm comm;
 }
 
 int   MPI_Scatter( sendbuf, sendcnt, sendtype, recvbuf, recvcnt, recvtype, root, comm )
-const void * sendbuf;
+MPE_CONST void * sendbuf;
 int sendcnt;
 MPI_Datatype sendtype;
 void * recvbuf;
@@ -2172,9 +2172,9 @@ MPI_Comm comm;
 
 int   MPI_Scatterv( sendbuf, sendcnts, displs, sendtype,
                     recvbuf, recvcnt, recvtype, root, comm )
-const void * sendbuf;
-const int * sendcnts;
-const int * displs;
+MPE_CONST void * sendbuf;
+MPE_CONST int * sendcnts;
+MPE_CONST int * displs;
 MPI_Datatype sendtype;
 void * recvbuf;
 int recvcnt;
@@ -2798,7 +2798,7 @@ MPI_Group * group_out;
 int   MPI_Group_excl( group, n, ranks, newgroup )
 MPI_Group group;
 int n;
-const int * ranks;
+MPE_CONST int * ranks;
 MPI_Group * newgroup;
 {
   int   returnVal;
@@ -2869,7 +2869,7 @@ MPI_Group * group;
 int   MPI_Group_incl( group, n, ranks, group_out )
 MPI_Group group;
 int n;
-const int * ranks;
+MPE_CONST int * ranks;
 MPI_Group * group_out;
 {
   int   returnVal;
@@ -3086,7 +3086,7 @@ int * size;
 int   MPI_Group_translate_ranks( group_a, n, ranks_a, group_b, ranks_b )
 MPI_Group group_a;
 int n;
-const int * ranks_a;
+MPE_CONST int * ranks_a;
 MPI_Group group_b;
 int * ranks_b;
 {
@@ -4009,7 +4009,7 @@ double  MPI_Wtime(  )
 #endif
 
 int  MPI_Address( location, address )
-const void * location;
+MPE_CONST void * location;
 MPI_Aint * address;
 {
   int  returnVal;
@@ -4044,7 +4044,7 @@ MPI_Aint * address;
 }
 
 int  MPI_Bsend( buf, count, datatype, dest, tag, comm )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4087,7 +4087,7 @@ MPI_Comm comm;
 }
 
 int  MPI_Bsend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4318,7 +4318,7 @@ MPI_Request * request;
 }
 
 int  MPI_Send_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4360,7 +4360,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int   MPI_Get_elements( const MPI_Status *status, MPI_Datatype datatype,
+int   MPI_Get_elements( MPE_CONST MPI_Status *status,
+                        MPI_Datatype datatype,
 			int *elements )
 {
   int   returnVal;
@@ -4394,8 +4395,8 @@ int   MPI_Get_elements( const MPI_Status *status, MPI_Datatype datatype,
   return returnVal;
 }
 
-int  MPI_Get_count( const MPI_Status *status, MPI_Datatype datatype, 
-		    int *count )
+int  MPI_Get_count( MPE_CONST MPI_Status *status, MPI_Datatype datatype,
+                    int *count )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4429,7 +4430,7 @@ int  MPI_Get_count( const MPI_Status *status, MPI_Datatype datatype,
 }
 
 int  MPI_Ibsend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4569,7 +4570,7 @@ MPI_Request * request;
 }
 
 int  MPI_Irsend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4615,7 +4616,7 @@ MPI_Request * request;
 }
 
 int  MPI_Isend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4661,7 +4662,7 @@ MPI_Request * request;
 }
 
 int  MPI_Issend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4707,7 +4708,7 @@ MPI_Request * request;
 }
 
 int   MPI_Pack( inbuf, incount, type, outbuf, outcount, position, comm )
-const void * inbuf;
+MPE_CONST void * inbuf;
 int incount;
 MPI_Datatype type;
 void * outbuf;
@@ -4899,7 +4900,7 @@ MPI_Status * status;
 }
 
 int  MPI_Rsend( buf, count, datatype, dest, tag, comm )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4942,7 +4943,7 @@ MPI_Comm comm;
 }
 
 int  MPI_Rsend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -4985,7 +4986,7 @@ MPI_Request * request;
 }
 
 int  MPI_Send( buf, count, datatype, dest, tag, comm )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -5167,7 +5168,7 @@ MPI_Status * status;
 }
 
 int  MPI_Ssend( buf, count, datatype, dest, tag, comm )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -5209,7 +5210,7 @@ MPI_Comm comm;
 }
 
 int  MPI_Ssend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
+MPE_CONST void * buf;
 int count;
 MPI_Datatype datatype;
 int dest;
@@ -5521,7 +5522,7 @@ MPI_Status * status;
 }
 
 int  MPI_Test_cancelled( status, flag )
-const MPI_Status * status;
+MPE_CONST MPI_Status * status;
 int * flag;
 {
   int  returnVal;
@@ -5778,8 +5779,8 @@ MPI_Datatype * datatype;
 
 int  MPI_Type_hindexed( count, blocklens, indices, old_type, newtype )
 int count;
-const int * blocklens;
-const MPI_Aint * indices;
+MPE_CONST int * blocklens;
+MPE_CONST MPI_Aint * indices;
 MPI_Datatype old_type;
 MPI_Datatype * newtype;
 {
@@ -5855,8 +5856,8 @@ MPI_Datatype * newtype;
 
 int  MPI_Type_indexed( count, blocklens, indices, old_type, newtype )
 int count;
-const int * blocklens;
-const int * indices;
+MPE_CONST int * blocklens;
+MPE_CONST int * indices;
 MPI_Datatype old_type;
 MPI_Datatype * newtype;
 {
@@ -5963,9 +5964,9 @@ int          * size;
 
 int  MPI_Type_struct( count, blocklens, indices, old_types, newtype )
 int count;
-const int * blocklens;
-const MPI_Aint * indices;
-const MPI_Datatype * old_types;
+MPE_CONST int * blocklens;
+MPE_CONST MPI_Aint * indices;
+MPE_CONST MPI_Datatype * old_types;
 MPI_Datatype * newtype;
 {
   int  returnVal;
@@ -6073,7 +6074,7 @@ MPI_Datatype * newtype;
 }
 
 int   MPI_Unpack( inbuf, insize, position, outbuf, outcount, type, comm )
-const void * inbuf;
+MPE_CONST void * inbuf;
 int insize;
 int * position;
 void * outbuf;
@@ -6425,8 +6426,8 @@ int * coords;
 int   MPI_Cart_create( comm_old, ndims, dims, periods, reorder, comm_cart )
 MPI_Comm comm_old;
 int ndims;
-const int * dims;
-const int * periods;
+MPE_CONST int * dims;
+MPE_CONST int * periods;
 int reorder;
 MPI_Comm * comm_cart;
 {
@@ -6506,8 +6507,8 @@ int * coords;
 int   MPI_Cart_map( comm_old, ndims, dims, periods, newrank )
 MPI_Comm comm_old;
 int ndims;
-const int * dims;
-const int * periods;
+MPE_CONST int * dims;
+MPE_CONST int * periods;
 int * newrank;
 {
   int   returnVal;
@@ -6543,7 +6544,7 @@ int * newrank;
 
 int   MPI_Cart_rank( comm, coords, rank )
 MPI_Comm comm;
-const int * coords;
+MPE_CONST int * coords;
 int * rank;
 {
   int   returnVal;
@@ -6617,7 +6618,7 @@ int * dest;
 
 int   MPI_Cart_sub( comm, remain_dims, comm_new )
 MPI_Comm comm;
-const int * remain_dims;
+MPE_CONST int * remain_dims;
 MPI_Comm * comm_new;
 {
   int   returnVal;
@@ -6728,8 +6729,8 @@ int * dims;
 int   MPI_Graph_create( comm_old, nnodes, index, edges, reorder, comm_graph )
 MPI_Comm comm_old;
 int nnodes;
-const int * index;
-const int * edges;
+MPE_CONST int * index;
+MPE_CONST int * edges;
 int reorder;
 MPI_Comm * comm_graph;
 {
@@ -6809,8 +6810,8 @@ int * edges;
 int   MPI_Graph_map( comm_old, nnodes, index, edges, newrank )
 MPI_Comm comm_old;
 int nnodes;
-const int * index;
-const int * edges;
+MPE_CONST int * index;
+MPE_CONST int * edges;
 int * newrank;
 {
   int   returnVal;

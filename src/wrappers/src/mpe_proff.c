@@ -45,27 +45,56 @@ char *alloca ();
 #include <stdarg.h>
 #endif
 
-#if ! defined( MPICH_NAME ) || defined ( MPICH2 )
+/*
+ HAVE_MPIR_IARGC and HAVE_MPIR_GETARG will be defined by configure tests.
+#if (MPICH_NAME == 1)
+#define HAVE_MPIR_IARGC  1
+#define HAVE_MPIR_GETARG 1
+#else
+#undef HAVE_MPIR_IARGC
+#undef HAVE_MPIR_GETARG
+#endif
+*/
+
+
+#if defined(HAVE_MPIR_IARGC)
+
+/* Make sure that we get the correct Fortran form */
+#if def(F77_NAME_UPPER)
+#define mpir_iargc_ MPIR_IARGC
+#elif defined(F77_NAME_LOWER_2USCORE)
+#define mpir_iargc_ mpir_iargc__
+#elif !defined(F77_NAME_LOWER_USCORE)
+#define mpir_iargc_ mpir_iargc
+#endif
+
+#else
+
+#define mpir_iargc_() 0
+
+#endif
+
+
+
+#if defined(HAVE_MPIR_GETARG)
+
+/* Make sure that we get the correct Fortran form */
+#if defined(F77_NAME_UPPER)
+#define mpir_getarg_ MPIR_GETARG
+#elif defined(F77_NAME_LOWER_2USCORE)
+#define mpir_getarg_ mpir_getarg__
+#elif !defined(F77_NAME_LOWER_USCORE)
+#define mpir_getarg_ mpir_getarg
+#endif
+
+#else
+
 #if defined( HAVE_STRING_H )
 #include <string.h>
 #endif
 /* If we aren't running MPICH, just use fprintf for errors */
 /* Also avoid Fortran arguments */
-#define mpir_iargc_() 0
 #define mpir_getarg_( idx, str, ln ) strncpy(str,"Unknown",ln)
-#else
-/* Make sure that we get the correct Fortran form */
-
-#ifdef F77_NAME_UPPER
-#define mpir_iargc_ MPIR_IARGC
-#define mpir_getarg_ MPIR_GETARG
-#elif defined(F77_NAME_LOWER_2USCORE)
-#define mpir_iargc_ mpir_iargc__
-#define mpir_getarg_ mpir_getarg__
-#elif !defined(F77_NAME_LOWER_USCORE)
-#define mpir_iargc_ mpir_iargc
-#define mpir_getarg_ mpir_getarg
-#endif
 
 #endif
 
