@@ -199,6 +199,9 @@ configure: configure.ac aclocal_core.m4 aclocal_f77.m4 aclocal_make.m4 \
 	autoheader
 	autoconf
 
+Makefile: configure Makefile.in
+	./config.status
+
 # Allow dependencies target
 dependencies:
 
@@ -210,6 +213,40 @@ tags: TAGS
 TAGS:
 ctags: tags
 
+
+##
+## A Maintainer's target: Create a distribution of this release
+## The easy approach is to create the distribution copy from the
+## source files in the working directory.  An option that is more
+## robust is to create it from a particular commit in the repository
+## TODO: Add support for things like DISTDIR
+DISTDIRS = etc src include cross_spec sbin bin maint
+DISTFILES = INSTALL INSTALL.cross Makefile.in README README.windows \
+	aclocal.m4 aclocal_core.m4 aclocal_f77.m4 aclocal_inttypes.m4 \
+	aclocal_make.m4 aclocal_mpi.m4 autogen.sh fmpe.def mpe.def \
+	mpe.vcproj mpewrap.vcproj configure.ac install-sh config.sub \
+	config.guess
+# The chmod -R -N * command removes extended permission information,
+# which OSX seems to add at the drop of a hat.  If those extended
+# permissions are not removed, the tar file will contain a "dot" file
+# for almost every file (!).
+# WARNING: To ensure a clean distribution file, this executes a "distclean"
+# step, which will remove all of the generated files, including this Makefile.
+dist: Makefile
+	@$(MAKE) distclean
+	@if [ ! -d tmp ] ; then mkdir tmp ; \
+	else echo "Remove the tmp directory first"; exit 1; fi
+	@if [ -d mpe2-@VERSION@ ] ; then \
+	echo "Remove the mpe2-@VERSION@ directory first"; exit 1; fi
+	@if [ -f mpe2-@VERSION@.tgz ] ; then $(RM) -f mpe2-@VERSION@.tgz ; fi
+	for dir in $(DISTDIRS) ; do cp -rp $$dir tmp/$$dir ; done
+	for file in $(DISTFILES) ; do cp -p $$file tmp/$$file ; done
+	(cd tmp && ./autogen.sh)
+	(cd tmp && chmod -R -N *)
+	(cd tmp && find . -name '.gitignore*' -print | xargs $(RM))
+	mv tmp mpe2-@VERSION@
+	tar zcf mpe2-@VERSION@.tgz mpe2-@VERSION@
+	$(RM) -rf mpe2-@VERSION@
 
 ################################################################################
 # unimplemented targets that MPICH2's automake may recursively invoke; see

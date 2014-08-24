@@ -1,7 +1,7 @@
                       MPE (Multi-Processing Environment)
                       ----------------------------------
 
-                          Version 2.4.6. March, 2008
+                          Version 2.4.7. August, 2014
 
                     Mathematics and Computer Science Division
                            Argonne National Laboratory
@@ -13,7 +13,23 @@ MPE can be configured and installed as an extension to most MPI standard
 -compliant MPI implementations, e.g. MPICH-2, MPICH, LAM/MPI, Open/MPI,
 SGI's MPI, HP-UX's MPI and IBM's MPI.  It has been integrated seamlessly
 into MPICH and MPICH-2 distributions, so MPE will be installed automatically
-during MPICH-X's installation process.  
+during MPICH-X's installation process.
+
+Note that MPE is not part of MPICH version 3 (the successor to MPICH-2).
+
+The easiest way to install MPE is to specify the following 3 items:
+CC=<program to compile MPI C programs>
+F77=<program to compile MPI Fortran 77 programs>
+--prefix=<install location for mpe>
+
+For example, if MPICH is the installed MPI and the commands mpicc and
+mpifort are in the default search path, this command should work
+
+./configure CC=mpicc F77=mpifort --prefix=$HOME/installs/mpe2
+
+This assumes that $HOME is your home directory.  More detailed control of
+the configuration and build is possible and is described in the rest of this
+document.
 
 
 
