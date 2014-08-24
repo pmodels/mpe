@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "mpi.h"
 #include "mpe_graphics_conf.h"
 
 /* This is used to correct system header files without prototypes */
@@ -24,7 +25,6 @@
 #include <varargs.h>
 #endif
 
-#include "mpi.h"
 #include "mpe_graphics.h"
 #include "point.h"
 
@@ -79,8 +79,7 @@ point a, b;
 
 
 
-static void DrawScreen_0( procid, np ) 
-int procid, np;
+static void DrawScreen_0(int procid, int np) 
 {
   int width, procNum, radius;
   double angle;
@@ -129,8 +128,7 @@ int procid, np;
 
 
 
-static void MPE_Prof_DrawArrow_0( fromProc, toProc )
-int fromProc, toProc;
+static void MPE_Prof_DrawArrow_0(int fromProc, int toProc)
 {
   point start, end, a, b, c, d, e;
   vector unit, norm;
@@ -163,17 +161,13 @@ int fromProc, toProc;
   MPE_Update( prof_graph_0 );
 }
 
-static int prof_send( sender, receiver, tag, size, note )
-int sender, receiver, tag, size;
-char *note;
+static int prof_send(int sender, int receiver, int tag, int size, char *note)
 {
   MPE_Prof_DrawArrow_0( sender, receiver );
   return 0;
 }
 
-static int prof_recv( receiver, sender, tag, size, note )
-int receiver, sender, tag, size;
-char *note;
+static int prof_recv(int receiver, int sender, int tag, int size, char *note)
 {
   MPE_Prof_DrawArrow_0( sender, receiver );
   return 0;
@@ -293,9 +287,7 @@ static void ProcessWaitTest_1 ( MPI_Request request, MPI_Status *status,
 }
 
 
-int  MPI_Init( argc, argv )
-int * argc;
-char *** argv;
+int  MPI_Init(int *argc, char ***argv)
 {
   int  returnVal;
  
@@ -315,19 +307,14 @@ char *** argv;
   return returnVal;
 }
 
-int MPI_Finalize()
+int MPI_Finalize(void)
 {
     rq_end( requests_avail_1 );
     return PMPI_Finalize();
 }
 
-int  MPI_Bsend( buf, count, datatype, dest, tag, comm )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Bsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	       int dest, int tag, MPI_Comm comm)
 {
   int  returnVal;
   int typesize;
@@ -345,14 +332,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Bsend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Bsend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -381,8 +362,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Cancel( request )
-MPI_Request * request;
+int  MPI_Cancel(MPI_Request *request)
 {
   int  returnVal;
   request_list *rq;
@@ -398,8 +378,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Request_free( request )
-MPI_Request * request;
+int  MPI_Request_free(MPI_Request *request)
 {
   int  returnVal;
 
@@ -413,14 +392,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Recv_init( buf, count, datatype, source, tag, comm, request )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Recv_init(void *buf, int count, MPI_Datatype datatype, int source,
+		   int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq1;
@@ -441,14 +414,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Send_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Send_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		   int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -477,14 +444,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Ibsend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Ibsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -513,14 +474,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Irecv( buf, count, datatype, source, tag, comm, request )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source,
+	       int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq1;
@@ -542,14 +497,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Irsend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Irsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -578,14 +527,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Isend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Isend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	       int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -614,14 +557,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Issend( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Issend(MPE_CONST void *buf, int count, MPI_Comm datatype, int dest,
+		int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -650,14 +587,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Recv( buf, count, datatype, source, tag, comm, status )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source,
+	      int tag, MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal;
   int size;
@@ -675,13 +606,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Rsend( buf, count, datatype, dest, tag, comm )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Rsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	       int dest, int tag, MPI_Comm comm)
 {
   int  returnVal;
   int typesize;
@@ -699,14 +625,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Rsend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Rsend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -735,13 +655,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Send( buf, count, datatype, dest, tag, comm )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Send(MPE_CONST void *buf, int count, MPI_Datatype datatype, int dest,
+	      int tag, MPI_Comm comm)
 {
   int  returnVal;
   int typesize;
@@ -759,19 +674,10 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Sendrecv( sendbuf, sendcount, sendtype, dest, sendtag, recvbuf, recvcount, recvtype, source, recvtag, comm, status )
-const void * sendbuf;
-int sendcount;
-MPI_Datatype sendtype;
-int dest;
-int sendtag;
-void * recvbuf;
-int recvcount;
-MPI_Datatype recvtype;
-int source;
-int recvtag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Sendrecv(MPE_CONST void *sendbuf, int sendcount, MPI_Datatype sendtype,
+		  int dest, int sendtag, void *recvbuf, int recvcount,
+		  MPI_Datatype recvtype, int source, int recvtag, MPI_Comm comm,
+		  MPI_Status *status)
 {
   int  returnVal;
   int typesize1;
@@ -793,16 +699,9 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Sendrecv_replace( buf, count, datatype, dest, sendtag, source, recvtag, comm, status )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int sendtag;
-int source;
-int recvtag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype, int dest,
+			  int sendtag, int source, int recvtag,
+			  MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal;
   int size1;
@@ -824,13 +723,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Ssend( buf, count, datatype, dest, tag, comm )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Ssend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	       int dest, int tag, MPI_Comm comm)
 {
   int  returnVal;
   int typesize;
@@ -848,14 +742,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Ssend_init( buf, count, datatype, dest, tag, comm, request )
-const void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Ssend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+		    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   request_list *newrq;
@@ -884,10 +772,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int   MPI_Test( request, flag, status )
-MPI_Request * request;
-int * flag;
-MPI_Status * status;
+int   MPI_Test(MPI_Request *request, int *flag, MPI_Status *status)
 {
   int   returnVal;
   MPI_Request lreq = *request;
@@ -901,11 +786,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Testall( count, array_of_requests, flag, array_of_statuses )
-int count;
-MPI_Request * array_of_requests;
-int * flag;
-MPI_Status * array_of_statuses;
+int  MPI_Testall(int count, MPI_Request *array_of_requests, int *flag,
+		 MPI_Status *array_of_statuses)
 {
   int  returnVal;
   int i3;
@@ -925,12 +807,8 @@ MPI_Status * array_of_statuses;
   return returnVal;
 }
 
-int  MPI_Testany( count, array_of_requests, index, flag, status )
-int count;
-MPI_Request * array_of_requests;
-int * index;
-int * flag;
-MPI_Status * status;
+int  MPI_Testany(int count, MPI_Request *array_of_requests, int *index,
+		 int *flag, MPI_Status *status)
 {
   int  returnVal;
 
@@ -945,12 +823,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Testsome( incount, array_of_requests, outcount, array_of_indices, array_of_statuses )
-int incount;
-MPI_Request * array_of_requests;
-int * outcount;
-int * array_of_indices;
-MPI_Status * array_of_statuses;
+int  MPI_Testsome(int incount, MPI_Request *array_of_requests, int *outcount,
+		  int *array_of_indices, MPI_Status *array_of_statuses)
 {
   int  returnVal;
   int i2;
@@ -970,9 +844,7 @@ MPI_Status * array_of_statuses;
   return returnVal;
 }
 
-int   MPI_Wait( request, status )
-MPI_Request * request;
-MPI_Status * status;
+int   MPI_Wait(MPI_Request *request, MPI_Status *status)
 {
   int   returnVal;
   MPI_Request lreq = *request;
@@ -984,10 +856,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Waitall( count, array_of_requests, array_of_statuses )
-int count;
-MPI_Request * array_of_requests;
-MPI_Status * array_of_statuses;
+int  MPI_Waitall(int count, MPI_Request *array_of_requests,
+		 MPI_Status *array_of_statuses)
 {
   int  returnVal;
   int i1;
@@ -1007,11 +877,8 @@ MPI_Status * array_of_statuses;
   return returnVal;
 }
 
-int  MPI_Waitany( count, array_of_requests, index, status )
-int count;
-MPI_Request * array_of_requests;
-int * index;
-MPI_Status * status;
+int  MPI_Waitany(int count, MPI_Request *array_of_requests, int *index,
+		 MPI_Status *status) 
 {
   int  returnVal;
 
@@ -1025,12 +892,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Waitsome( incount, array_of_requests, outcount, array_of_indices, array_of_statuses )
-int incount;
-MPI_Request * array_of_requests;
-int * outcount;
-int * array_of_indices;
-MPI_Status * array_of_statuses;
+int  MPI_Waitsome(int incount, MPI_Request *array_of_requests, int *outcount,
+		  int *array_of_indices, MPI_Status *array_of_statuses)
 {
   int  returnVal;
   int i;

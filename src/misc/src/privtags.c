@@ -28,10 +28,7 @@ static int MPE_Tag_keyval = MPI_KEYVAL_INVALID;
 /*
    Private routine to delete internal storage when a communicator is freed.
  */
-int MPE_DelTag( comm, keyval, attr_val, extra_state )
-MPI_Comm comm;
-int      keyval;
-void     *attr_val, *extra_state;
+int MPE_DelTag(MPI_Comm comm, int keyval, void *attr_val, void *extra_state)
 {
 /* The attribute value is malloc'ed on creation; this prevents a
    storage leak */
@@ -64,9 +61,8 @@ return MPI_SUCCESS;
 .seealso: MPE_ReturnTags
   
 @*/
-int MPE_GetTags( comm_in, ntags, comm_out, first_tag )
-MPI_Comm comm_in, *comm_out;
-int      ntags, *first_tag;
+int MPE_GetTags( MPI_Comm comm_in, int ntags, MPI_Comm *comm_out,
+		 int *first_tag )
 {
 int mpe_errno = MPI_SUCCESS;
 int *tagvalp, *maxval, flag;
@@ -122,9 +118,7 @@ return MPI_SUCCESS;
 .seealso: MPE_GetTags
   
 @*/
-int MPE_ReturnTags( comm, first_tag, ntags )
-MPI_Comm comm;
-int      first_tag, ntags;
+int MPE_ReturnTags(MPI_Comm comm, int first_tag, int ntags)
 {
 int *tagvalp, flag, mpe_errno;
 
@@ -151,7 +145,7 @@ return MPI_SUCCESS;
   to be called.  If it is, it should be called immediately before 
   'MPI_Finalize'.
 @*/
-int MPE_TagsEnd()
+int MPE_TagsEnd(void)
 {
     MPI_Keyval_free( &MPE_Tag_keyval );
     MPE_Tag_keyval = MPI_KEYVAL_INVALID;

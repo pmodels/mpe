@@ -26,10 +26,7 @@ static PixVal HiPix=0, LoPix=0;
 /* 
    Set the colors for the highlights by name 
  */
-int XBFrameColors( XBWin, Rgn, Hi, Lo )
-XBWindow     *XBWin;
-XBDecoration *Rgn;
-char         *Hi, *Lo;
+int XBFrameColors(XBWindow *XBWin, XBDecoration *Rgn, char *Hi, char *Lo)
 {
     Rgn->Hi = XBGetColor( XBWin, Hi, 1 );
     Rgn->Lo = XBGetColor( XBWin, Lo, 1 );
@@ -38,9 +35,7 @@ char         *Hi, *Lo;
     return 0;
 }
 
-int XBDrawFrame( XBWin, Rgn )
-XBWindow *XBWin;
-XBDecoration *Rgn;
+int XBDrawFrame(XBWindow *XBWin, XBDecoration *Rgn)
 {
     int    xl = Rgn->Box.x, yl = Rgn->Box.y, 
 	xh = Rgn->Box.xh, yh = Rgn->Box.yh,
@@ -114,9 +109,7 @@ XBDecoration *Rgn;
 .   x,y   - upper left corner of region to clear
 .   w,h   - width and height of region to clear
 */
-void XBClearWindow( XBWin, x, y, w, h )
-XBWindow *XBWin;
-int      x, y, w, h;
+void XBClearWindow(XBWindow *XBWin, int x, int y, int w, int h)
 {
     XBSetPixVal(XBWin, XBWin->background );
     XFillRectangle( XBWin->disp, XBDrawable(XBWin), XBWin->gc.set, 
@@ -126,9 +119,7 @@ int      x, y, w, h;
 /*
    Set the colors for the highlights by name 
  */
-void XBFrameColorsByName( XBWin, Hi, Lo )
-XBWindow *XBWin;
-char     *Hi, *Lo;
+void XBFrameColorsByName(XBWindow *XBWin, char *Hi, char *Lo)
 {
     if (XBWin->numcolors > 2) {
 	HiPix = XBGetColor( XBWin, Hi, 1 );

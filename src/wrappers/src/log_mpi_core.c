@@ -6,8 +6,8 @@
 #ifdef MPI_BUILD_PROFILING
 #undef MPI_BUILD_PROFILING
 #endif
-#include "mpe_wrappers_conf.h"
 #include "mpi.h"
+#include "mpe_wrappers_conf.h"
 #include "mpe_log.h"
 
 
@@ -542,12 +542,9 @@ extern MPEU_DLL_SPEC CLOG_CommSet_t  *CLOG_CommSet;
    If there are large numbers of requests, we should probably use a better
    search structure, such as a hash table or tree
 */
-void MPE_Req_add_send( request, datatype, count,
-                       dest, tag, commIDs, is_persistent )
-      MPI_Request     request;
-      MPI_Datatype    datatype;
-const CLOG_CommIDs_t *commIDs;
-      int             count, dest, tag, is_persistent;
+void MPE_Req_add_send(MPI_Request request, MPI_Datatype datatype, int count,
+                      int dest, int tag, const CLOG_CommIDs_t *commIDs,
+                      int is_persistent )
 {
     request_list *newrq;
     int typesize;
@@ -567,12 +564,9 @@ const CLOG_CommIDs_t *commIDs;
     }
 }
 
-void MPE_Req_add_recv( request, datatype, count,
-                       source, tag, commIDs, is_persistent )
-      MPI_Request     request;
-      MPI_Datatype    datatype;
-const CLOG_CommIDs_t *commIDs;
-      int             count, source, tag, is_persistent;
+void MPE_Req_add_recv(MPI_Request request, MPI_Datatype datatype, int count,
+                      int source, int tag, const CLOG_CommIDs_t *commIDs,
+                      int is_persistent)
 {
     request_list *newrq;
 
@@ -591,27 +585,22 @@ const CLOG_CommIDs_t *commIDs;
     }
 }
 
-void  MPE_Req_cancel( request )
-MPI_Request request;
+void  MPE_Req_cancel(MPI_Request request)
 {
     request_list *rq;
     rq_find( requests_head_0, request, rq );
     if (rq) rq->status |= RQ_CANCEL;
 }
 
-void  MPE_Req_remove( request )
-MPI_Request request;
+void  MPE_Req_remove(MPI_Request request)
 {
     rq_remove( requests_head_0, requests_tail_0, requests_avail_0, request );
 }
 
 /* Persistent sends and receives are handled with this routine (called by
    start or startall) */
-void MPE_Req_start( request, state, thdID, is_logging_on )
-MPI_Request  request;
-MPE_State   *state;
-int          thdID;
-int          is_logging_on;
+void MPE_Req_start(MPI_Request request, MPE_State *state, int thdID,
+                   int is_logging_on )
 {
     request_list *rq;
     MPE_State    *istate;
@@ -649,13 +638,8 @@ int          is_logging_on;
     }
 }
 
-void MPE_Req_wait_test( request, status, note, state, thdID, is_logging_on )
-MPI_Request  request;
-MPI_Status  *status;
-char        *note;
-MPE_State   *state;
-int          thdID;
-int          is_logging_on;
+void MPE_Req_wait_test(MPI_Request request, MPI_Status *status, char *note,
+                       MPE_State *state, int thdID, int is_logging_on )
 {
     request_list *rq, *last;
     int           flag, size;
@@ -1550,14 +1534,9 @@ void MPE_Init_internal_logging( void )
  */
 
 
-int   MPI_Allgather( sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm )
-MPE_CONST void * sendbuf;
-int sendcount;
-MPI_Datatype sendtype;
-void * recvbuf;
-int recvcount;
-MPI_Datatype recvtype;
-MPI_Comm comm;
+int   MPI_Allgather( MPE_CONST void *sendbuf, int sendcount,
+                     MPI_Datatype sendtype, void *recvbuf, int recvcount,
+                     MPI_Datatype recvtype, MPI_Comm comm )
 {
   int       returnVal;
   MPE_LOG_STATE_DECL
@@ -1589,15 +1568,11 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Allgatherv( sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, comm )
-MPE_CONST void * sendbuf;
-int sendcount;
-MPI_Datatype sendtype;
-void * recvbuf;
-MPE_CONST int * recvcounts;
-MPE_CONST int * displs;
-MPI_Datatype recvtype;
-MPI_Comm comm;
+int   MPI_Allgatherv( MPE_CONST void *sendbuf, int sendcount,
+                      MPI_Datatype sendtype, void *recvbuf,
+                      MPE_CONST int *recvcounts, MPE_CONST int *displs,
+                      MPI_Datatype recvtype,
+                      MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1630,13 +1605,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Allreduce( sendbuf, recvbuf, count, datatype, op, comm )
-MPE_CONST void * sendbuf;
-void * recvbuf;
-int count;
-MPI_Datatype datatype;
-MPI_Op op;
-MPI_Comm comm;
+int   MPI_Allreduce( MPE_CONST void *sendbuf, void *recvbuf, int count,
+                     MPI_Datatype datatype, MPI_Op op, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1669,14 +1639,9 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Alltoall( sendbuf, sendcnt, sendtype, recvbuf, recvcnt, recvtype, comm )
-MPE_CONST void * sendbuf;
-int sendcnt;
-MPI_Datatype sendtype;
-void * recvbuf;
-int recvcnt;
-MPI_Datatype recvtype;
-MPI_Comm comm;
+int  MPI_Alltoall( MPE_CONST void *sendbuf, int sendcnt, MPI_Datatype sendtype,
+                   void *recvbuf, int recvcnt, MPI_Datatype recvtype,
+                   MPI_Comm comm )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -1723,16 +1688,11 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Alltoallv( sendbuf, sendcnts, sdispls, sendtype, recvbuf, recvcnts, rdispls, recvtype, comm )
-MPE_CONST void * sendbuf;
-MPE_CONST int * sendcnts;
-MPE_CONST int * sdispls;
-MPI_Datatype sendtype;
-void * recvbuf;
-MPE_CONST int * recvcnts;
-MPE_CONST int * rdispls;
-MPI_Datatype recvtype;
-MPI_Comm comm;
+int   MPI_Alltoallv( MPE_CONST void * sendbuf, MPE_CONST int * sendcnts,
+                     MPE_CONST int * sdispls, MPI_Datatype sendtype,
+                     void * recvbuf, MPE_CONST int * recvcnts,
+                     MPE_CONST int * rdispls, MPI_Datatype recvtype,
+                     MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1783,8 +1743,7 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Barrier( comm )
-MPI_Comm comm;
+int   MPI_Barrier( MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1817,12 +1776,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int MPI_Bcast( buffer, count, datatype, root, comm )
-void * buffer;
-int count;
-MPI_Datatype datatype;
-int root;
-MPI_Comm comm;
+int MPI_Bcast( void * buffer, int count, MPI_Datatype datatype, int root,
+               MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1855,15 +1810,9 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int MPI_Gather( sendbuf, sendcnt, sendtype, recvbuf, recvcount, recvtype, root, comm )
-MPE_CONST void * sendbuf;
-int sendcnt;
-MPI_Datatype sendtype;
-void * recvbuf;
-int recvcount;
-MPI_Datatype recvtype;
-int root;
-MPI_Comm comm;
+int MPI_Gather( MPE_CONST void * sendbuf, int sendcnt, MPI_Datatype sendtype,
+                void * recvbuf, int recvcount, MPI_Datatype recvtype,
+                int root, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1896,16 +1845,10 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int MPI_Gatherv( sendbuf, sendcnt, sendtype, recvbuf, recvcnts, displs, recvtype, root, comm )
-MPE_CONST void * sendbuf;
-int sendcnt;
-MPI_Datatype sendtype;
-void * recvbuf;
-MPE_CONST int * recvcnts;
-MPE_CONST int * displs;
-MPI_Datatype recvtype;
-int root;
-MPI_Comm comm;
+int MPI_Gatherv( MPE_CONST void * sendbuf, int sendcnt, MPI_Datatype sendtype,
+                 void * recvbuf, MPE_CONST int * recvcnts,
+                 MPE_CONST int * displs, MPI_Datatype recvtype, int root,
+                 MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -1939,10 +1882,7 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Op_create( function, commute, op )
-MPI_User_function * function;
-int commute;
-MPI_Op * op;
+int  MPI_Op_create( MPI_User_function * function, int commute, MPI_Op * op )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -1975,8 +1915,7 @@ MPI_Op * op;
   return returnVal;
 }
 
-int  MPI_Op_free( op )
-MPI_Op * op;
+int  MPI_Op_free( MPI_Op * op )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -2009,13 +1948,9 @@ MPI_Op * op;
   return returnVal;
 }
 
-int   MPI_Reduce_scatter( sendbuf, recvbuf, recvcnts, datatype, op, comm )
-MPE_CONST void * sendbuf;
-void * recvbuf;
-const int * recvcnts;
-MPI_Datatype datatype;
-MPI_Op op;
-MPI_Comm comm;
+int   MPI_Reduce_scatter( MPE_CONST void * sendbuf, void * recvbuf,
+                          MPE_CONST int * recvcnts, MPI_Datatype datatype,
+                          MPI_Op op, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2049,14 +1984,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Reduce( sendbuf, recvbuf, count, datatype, op, root, comm )
-MPE_CONST void * sendbuf;
-void * recvbuf;
-int count;
-MPI_Datatype datatype;
-MPI_Op op;
-int root;
-MPI_Comm comm;
+int   MPI_Reduce( MPE_CONST void * sendbuf, void * recvbuf, int count,
+                  MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2089,13 +2018,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Scan( sendbuf, recvbuf, count, datatype, op, comm )
-MPE_CONST void * sendbuf;
-void * recvbuf;
-int count;
-MPI_Datatype datatype;
-MPI_Op op;
-MPI_Comm comm;
+int   MPI_Scan( MPE_CONST void * sendbuf, void * recvbuf, int count,
+                MPI_Datatype datatype, MPI_Op op, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2128,15 +2052,9 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Scatter( sendbuf, sendcnt, sendtype, recvbuf, recvcnt, recvtype, root, comm )
-MPE_CONST void * sendbuf;
-int sendcnt;
-MPI_Datatype sendtype;
-void * recvbuf;
-int recvcnt;
-MPI_Datatype recvtype;
-int root;
-MPI_Comm comm;
+int   MPI_Scatter( MPE_CONST void * sendbuf, int sendcnt, MPI_Datatype sendtype,
+                   void * recvbuf, int recvcnt, MPI_Datatype recvtype,
+                   int root, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2170,17 +2088,10 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Scatterv( sendbuf, sendcnts, displs, sendtype,
-                    recvbuf, recvcnt, recvtype, root, comm )
-MPE_CONST void * sendbuf;
-MPE_CONST int * sendcnts;
-MPE_CONST int * displs;
-MPI_Datatype sendtype;
-void * recvbuf;
-int recvcnt;
-MPI_Datatype recvtype;
-int root;
-MPI_Comm comm;
+int   MPI_Scatterv( MPE_CONST void * sendbuf, MPE_CONST int * sendcnts,
+                    MPE_CONST int * displs, MPI_Datatype sendtype,
+                    void * recvbuf, int recvcnt, MPI_Datatype recvtype,
+                    int root, MPI_Comm comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2214,9 +2125,7 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Attr_delete( comm, keyval )
-MPI_Comm comm;
-int keyval;
+int   MPI_Attr_delete( MPI_Comm comm, int keyval )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2249,11 +2158,7 @@ int keyval;
   return returnVal;
 }
 
-int   MPI_Attr_get( comm, keyval, attr_value, flag )
-MPI_Comm comm;
-int keyval;
-void * attr_value;
-int * flag;
+int   MPI_Attr_get( MPI_Comm comm, int keyval, void * attr_value, int * flag )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2286,10 +2191,7 @@ int * flag;
   return returnVal;
 }
 
-int   MPI_Attr_put( comm, keyval, attr_value )
-MPI_Comm comm;
-int keyval;
-void * attr_value;
+int   MPI_Attr_put( MPI_Comm comm, int keyval, void * attr_value )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2322,10 +2224,7 @@ void * attr_value;
   return returnVal;
 }
 
-int   MPI_Comm_compare( comm1, comm2, result )
-MPI_Comm comm1;
-MPI_Comm comm2;
-int * result;
+int   MPI_Comm_compare( MPI_Comm comm1, MPI_Comm comm2, int * result )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2358,10 +2257,7 @@ int * result;
   return returnVal;
 }
 
-int   MPI_Comm_create( comm, group, comm_out )
-MPI_Comm comm;
-MPI_Group group;
-MPI_Comm * comm_out;
+int   MPI_Comm_create( MPI_Comm comm, MPI_Group group, MPI_Comm * comm_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2397,9 +2293,7 @@ MPI_Comm * comm_out;
   return returnVal;
 }
 
-int   MPI_Comm_dup( comm, comm_out )
-MPI_Comm comm;
-MPI_Comm * comm_out;
+int   MPI_Comm_dup( MPI_Comm comm, MPI_Comm * comm_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2435,8 +2329,7 @@ MPI_Comm * comm_out;
   return returnVal;
 }
 
-int   MPI_Comm_free( comm )
-MPI_Comm * comm;
+int   MPI_Comm_free( MPI_Comm * comm )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2473,9 +2366,7 @@ MPI_Comm * comm;
   return returnVal;
 }
 
-int   MPI_Comm_group( comm, group )
-MPI_Comm comm;
-MPI_Group * group;
+int   MPI_Comm_group( MPI_Comm comm, MPI_Group * group )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2508,9 +2399,7 @@ MPI_Group * group;
   return returnVal;
 }
 
-int   MPI_Comm_rank( comm, rank )
-MPI_Comm comm;
-int * rank;
+int   MPI_Comm_rank( MPI_Comm comm, int * rank )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2543,9 +2432,7 @@ int * rank;
   return returnVal;
 }
 
-int   MPI_Comm_remote_group( comm, group )
-MPI_Comm comm;
-MPI_Group * group;
+int   MPI_Comm_remote_group( MPI_Comm comm, MPI_Group * group )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2578,9 +2465,7 @@ MPI_Group * group;
   return returnVal;
 }
 
-int   MPI_Comm_remote_size( comm, size )
-MPI_Comm comm;
-int * size;
+int   MPI_Comm_remote_size( MPI_Comm comm, int * size )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2613,9 +2498,7 @@ int * size;
   return returnVal;
 }
 
-int   MPI_Comm_size( comm, size )
-MPI_Comm comm;
-int * size;
+int   MPI_Comm_size( MPI_Comm comm, int * size )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2648,11 +2531,7 @@ int * size;
   return returnVal;
 }
 
-int   MPI_Comm_split( comm, color, key, comm_out )
-MPI_Comm comm;
-int color;
-int key;
-MPI_Comm * comm_out;
+int   MPI_Comm_split( MPI_Comm comm, int color, int key, MPI_Comm * comm_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2688,9 +2567,7 @@ MPI_Comm * comm_out;
   return returnVal;
 }
 
-int   MPI_Comm_test_inter( comm, flag )
-MPI_Comm comm;
-int * flag;
+int   MPI_Comm_test_inter( MPI_Comm comm, int * flag )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2723,10 +2600,7 @@ int * flag;
   return returnVal;
 }
 
-int   MPI_Group_compare( group1, group2, result )
-MPI_Group group1;
-MPI_Group group2;
-int * result;
+int   MPI_Group_compare( MPI_Group group1, MPI_Group group2, int * result )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2759,10 +2633,8 @@ int * result;
   return returnVal;
 }
 
-int   MPI_Group_difference( group1, group2, group_out )
-MPI_Group group1;
-MPI_Group group2;
-MPI_Group * group_out;
+int   MPI_Group_difference( MPI_Group group1, MPI_Group group2,
+                            MPI_Group * group_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2795,11 +2667,8 @@ MPI_Group * group_out;
   return returnVal;
 }
 
-int   MPI_Group_excl( group, n, ranks, newgroup )
-MPI_Group group;
-int n;
-MPE_CONST int * ranks;
-MPI_Group * newgroup;
+int   MPI_Group_excl( MPI_Group group, int n, MPE_CONST int * ranks,
+                      MPI_Group * newgroup )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2832,8 +2701,7 @@ MPI_Group * newgroup;
   return returnVal;
 }
 
-int   MPI_Group_free( group )
-MPI_Group * group;
+int   MPI_Group_free( MPI_Group * group )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2866,11 +2734,8 @@ MPI_Group * group;
   return returnVal;
 }
 
-int   MPI_Group_incl( group, n, ranks, group_out )
-MPI_Group group;
-int n;
-MPE_CONST int * ranks;
-MPI_Group * group_out;
+int   MPI_Group_incl( MPI_Group group, int n, MPE_CONST int * ranks,
+                      MPI_Group * group_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2903,10 +2768,8 @@ MPI_Group * group_out;
   return returnVal;
 }
 
-int   MPI_Group_intersection( group1, group2, group_out )
-MPI_Group group1;
-MPI_Group group2;
-MPI_Group * group_out;
+int   MPI_Group_intersection( MPI_Group group1, MPI_Group group2,
+                              MPI_Group * group_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2939,9 +2802,7 @@ MPI_Group * group_out;
   return returnVal;
 }
 
-int   MPI_Group_rank( group, rank )
-MPI_Group group;
-int * rank;
+int   MPI_Group_rank( MPI_Group group, int * rank )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -2974,11 +2835,8 @@ int * rank;
   return returnVal;
 }
 
-int   MPI_Group_range_excl( group, n, ranges, newgroup )
-MPI_Group group;
-int n;
-int ranges[][3];
-MPI_Group * newgroup;
+int   MPI_Group_range_excl( MPI_Group group, int n, int ranges[][3],
+                            MPI_Group * newgroup )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3011,11 +2869,8 @@ MPI_Group * newgroup;
   return returnVal;
 }
 
-int   MPI_Group_range_incl( group, n, ranges, newgroup )
-MPI_Group group;
-int n;
-int ranges[][3];
-MPI_Group * newgroup;
+int   MPI_Group_range_incl( MPI_Group group, int n, int ranges[][3],
+                            MPI_Group * newgroup )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3048,9 +2903,7 @@ MPI_Group * newgroup;
   return returnVal;
 }
 
-int   MPI_Group_size( group, size )
-MPI_Group group;
-int * size;
+int   MPI_Group_size( MPI_Group group, int * size )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3083,12 +2936,9 @@ int * size;
   return returnVal;
 }
 
-int   MPI_Group_translate_ranks( group_a, n, ranks_a, group_b, ranks_b )
-MPI_Group group_a;
-int n;
-MPE_CONST int * ranks_a;
-MPI_Group group_b;
-int * ranks_b;
+int   MPI_Group_translate_ranks( MPI_Group group_a, int n,
+                                 MPE_CONST int * ranks_a, MPI_Group group_b,
+                                 int * ranks_b )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3122,10 +2972,8 @@ int * ranks_b;
   return returnVal;
 }
 
-int   MPI_Group_union( group1, group2, group_out )
-MPI_Group group1;
-MPI_Group group2;
-MPI_Group * group_out;
+int   MPI_Group_union( MPI_Group group1, MPI_Group group2,
+                       MPI_Group * group_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3158,13 +3006,9 @@ MPI_Group * group_out;
   return returnVal;
 }
 
-int   MPI_Intercomm_create( local_comm, local_leader, peer_comm, remote_leader, tag, comm_out )
-MPI_Comm local_comm;
-int local_leader;
-MPI_Comm peer_comm;
-int remote_leader;
-int tag;
-MPI_Comm * comm_out;
+int   MPI_Intercomm_create( MPI_Comm local_comm, int local_leader,
+                            MPI_Comm peer_comm, int remote_leader, int tag,
+                            MPI_Comm * comm_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3203,10 +3047,7 @@ MPI_Comm * comm_out;
   return returnVal;
 }
 
-int   MPI_Intercomm_merge( comm, high, comm_out )
-MPI_Comm comm;
-int high;
-MPI_Comm * comm_out;
+int   MPI_Intercomm_merge( MPI_Comm comm, int high, MPI_Comm * comm_out )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3242,11 +3083,9 @@ MPI_Comm * comm_out;
   return returnVal;
 }
 
-int   MPI_Keyval_create( copy_fn, delete_fn, keyval, extra_state )
-MPI_Copy_function * copy_fn;
-MPI_Delete_function * delete_fn;
-int * keyval;
-void * extra_state;
+int   MPI_Keyval_create( MPI_Copy_function * copy_fn,
+                         MPI_Delete_function * delete_fn, int * keyval,
+                         void * extra_state )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3279,8 +3118,7 @@ void * extra_state;
   return returnVal;
 }
 
-int   MPI_Keyval_free( keyval )
-int * keyval;
+int   MPI_Keyval_free( int * keyval )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -3313,9 +3151,7 @@ int * keyval;
   return returnVal;
 }
 
-int  MPI_Abort( comm, errorcode )
-MPI_Comm comm;
-int errorcode;
+int  MPI_Abort( MPI_Comm comm, int errorcode )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3349,9 +3185,7 @@ int errorcode;
   return returnVal;
 }
 
-int  MPI_Error_class( errorcode, errorclass )
-int errorcode;
-int * errorclass;
+int  MPI_Error_class( int errorcode, int * errorclass )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3384,9 +3218,8 @@ int * errorclass;
   return returnVal;
 }
 
-int  MPI_Errhandler_create( function, errhandler )
-MPI_Handler_function * function;
-MPI_Errhandler * errhandler;
+int  MPI_Errhandler_create( MPI_Handler_function * function,
+                            MPI_Errhandler * errhandler )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3419,8 +3252,7 @@ MPI_Errhandler * errhandler;
   return returnVal;
 }
 
-int  MPI_Errhandler_free( errhandler )
-MPI_Errhandler * errhandler;
+int  MPI_Errhandler_free( MPI_Errhandler * errhandler )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3453,9 +3285,7 @@ MPI_Errhandler * errhandler;
   return returnVal;
 }
 
-int  MPI_Errhandler_get( comm, errhandler )
-MPI_Comm comm;
-MPI_Errhandler * errhandler;
+int  MPI_Errhandler_get( MPI_Comm comm, MPI_Errhandler * errhandler )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3488,10 +3318,7 @@ MPI_Errhandler * errhandler;
   return returnVal;
 }
 
-int  MPI_Error_string( errorcode, string, resultlen )
-int errorcode;
-char * string;
-int * resultlen;
+int  MPI_Error_string( int errorcode, char * string, int * resultlen )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3524,9 +3351,7 @@ int * resultlen;
   return returnVal;
 }
 
-int  MPI_Errhandler_set( comm, errhandler )
-MPI_Comm comm;
-MPI_Errhandler errhandler;
+int  MPI_Errhandler_set( MPI_Comm comm, MPI_Errhandler errhandler )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3564,7 +3389,7 @@ MPI_Errhandler errhandler;
 /* Copy of CLOG_Util_getenvbool() in log_mpi_util.c */
 int MPE_Util_getenvbool( char *env_var, int default_value );
 
-int  MPI_Finalize( )
+int  MPI_Finalize(void)
 {
     MPE_State       *state;
     MPE_Event       *event;
@@ -3732,9 +3557,7 @@ int  MPI_Finalize( )
     return returnVal;
 }
 
-int  MPI_Get_processor_name( name, resultlen )
-char * name;
-int * resultlen;
+int  MPI_Get_processor_name( char * name, int * resultlen )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3787,9 +3610,7 @@ int MPE_Init_mpi( int *argc, char ***argv )
  * Replacement for MPI_Init.  Initializes logging and sets up basic
  * state definitions, including default color/pattern values
  */
-int  MPI_Init( argc, argv )
-int     *argc;
-char  ***argv;
+int  MPI_Init( int     *argc, char  ***argv )
 {
     int   returnVal;
 
@@ -3844,11 +3665,7 @@ char  ***argv;
 }
 
 #if defined( HAVE_MPI_INIT_THREAD )
-int  MPI_Init_thread( argc, argv, required, provided )
-int    *argc;
-char ***argv;
-int     required;
-int    *provided;
+int  MPI_Init_thread( int *argc, char ***argv, int required, int *provided )
 {
     int   returnVal;
 
@@ -3906,8 +3723,7 @@ int    *provided;
     Log the beginning and ending of the time spent in MPI_Initialized calls.
 */
 /*
-int  MPI_Initialized( flag )
-int * flag;
+int  MPI_Initialized( int * flag )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -3941,7 +3757,7 @@ int * flag;
    Use the regular routines for these.  Note that the state logging needs
    MPI_Wtime; make sure that it uses PMPI_Wtime if you use these
 */
-double  MPI_Wtick(  )
+double  MPI_Wtick( void )
 {
   double  returnVal;
   MPE_LOG_STATE_DECL
@@ -3974,7 +3790,7 @@ double  MPI_Wtick(  )
   return returnVal;
 }
 
-double  MPI_Wtime(  )
+double  MPI_Wtime( void )
 {
   double  returnVal;
   MPE_LOG_STATE_DECL
@@ -4008,9 +3824,7 @@ double  MPI_Wtime(  )
 }
 #endif
 
-int  MPI_Address( location, address )
-MPE_CONST void * location;
-MPI_Aint * address;
+int  MPI_Address( MPE_CONST void * location, MPI_Aint * address )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4043,13 +3857,8 @@ MPI_Aint * address;
   return returnVal;
 }
 
-int  MPI_Bsend( buf, count, datatype, dest, tag, comm )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Bsend(MPE_CONST void *buf, int count, MPI_Datatype datatype, int dest,
+               int tag, MPI_Comm comm)
 {
   int  returnVal;
   int  size;
@@ -4086,14 +3895,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Bsend_init( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Bsend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4129,9 +3932,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Buffer_attach( buffer, size )
-void * buffer;
-int size;
+int  MPI_Buffer_attach(void *buffer, int size)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4164,9 +3965,7 @@ int size;
   return returnVal;
 }
 
-int  MPI_Buffer_detach( buffer, size )
-void * buffer;
-int * size;
+int  MPI_Buffer_detach(void *buffer, int *size)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4199,8 +3998,7 @@ int * size;
   return returnVal;
 }
 
-int  MPI_Cancel( request )
-MPI_Request * request;
+int  MPI_Cancel(MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4235,8 +4033,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Request_free( request )
-MPI_Request * request;
+int  MPI_Request_free(MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4271,14 +4068,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Recv_init( buf, count, datatype, source, tag, comm, request )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Recv_init(void *buf, int count, MPI_Datatype datatype, int source,
+                   int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4317,14 +4108,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Send_init( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Send_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                   int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4360,9 +4145,9 @@ MPI_Request * request;
   return returnVal;
 }
 
-int   MPI_Get_elements( MPE_CONST MPI_Status *status,
-                        MPI_Datatype datatype,
-			int *elements )
+int   MPI_Get_elements(MPE_CONST MPI_Status *status,
+                       MPI_Datatype datatype,
+                       int *elements )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -4429,14 +4214,8 @@ int  MPI_Get_count( MPE_CONST MPI_Status *status, MPI_Datatype datatype,
   return returnVal;
 }
 
-int  MPI_Ibsend( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Ibsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4471,12 +4250,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Iprobe( source, tag, comm, flag, status )
-int source;
-int tag;
-MPI_Comm comm;
-int * flag;
-MPI_Status * status;
+int  MPI_Iprobe(int source, int tag, MPI_Comm comm, int *flag,
+                MPI_Status *status)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4525,14 +4300,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Irecv( buf, count, datatype, source, tag, comm, request )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source,
+               int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4569,14 +4338,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Irsend( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Irsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   int  size;
@@ -4615,14 +4378,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Isend( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Isend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+               int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   int  size;
@@ -4661,14 +4418,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Issend( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Issend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   int  size;
@@ -4707,14 +4458,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int   MPI_Pack( inbuf, incount, type, outbuf, outcount, position, comm )
-MPE_CONST void * inbuf;
-int incount;
-MPI_Datatype type;
-void * outbuf;
-int outcount;
-int * position;
-MPI_Comm comm;
+int   MPI_Pack(MPE_CONST void *inbuf, int incount, MPI_Datatype type,
+               void *outbuf, int outcount, int *position, MPI_Comm comm)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -4748,11 +4493,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Pack_size( incount, datatype, comm, size )
-int incount;
-MPI_Datatype datatype;
-MPI_Comm comm;
-int * size;
+int   MPI_Pack_size(int incount, MPI_Datatype datatype, MPI_Comm comm,
+                    int *size )
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -4785,11 +4527,7 @@ int * size;
   return returnVal;
 }
 
-int  MPI_Probe( source, tag, comm, status )
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4838,14 +4576,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Recv( buf, count, datatype, source, tag, comm, status )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source,
+              int tag, MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal, acount;
   MPE_LOG_STATE_DECL
@@ -4899,13 +4631,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Rsend( buf, count, datatype, dest, tag, comm )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Rsend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+               int dest, int tag, MPI_Comm comm)
 {
   int  returnVal;
   int  size;
@@ -4942,14 +4669,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Rsend_init( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Rsend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -4985,13 +4706,8 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Send( buf, count, datatype, dest, tag, comm )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Send(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+              int dest, int tag, MPI_Comm comm)
 {
   int  returnVal;
   int  size;
@@ -5028,21 +4744,10 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Sendrecv( sendbuf, sendcount, sendtype, dest, sendtag, 
-                   recvbuf, recvcount, recvtype, source, recvtag,
-                   comm, status )
-const void * sendbuf;
-int sendcount;
-MPI_Datatype sendtype;
-int dest;
-int sendtag;
-void * recvbuf;
-int recvcount;
-MPI_Datatype recvtype;
-int source;
-int recvtag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Sendrecv(MPE_CONST void *sendbuf, int sendcount,
+                  MPI_Datatype sendtype, int dest, int sendtag, void *recvbuf,
+                  int recvcount, MPI_Datatype recvtype, int source,
+                  int recvtag, MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal;
   int  acount, sendsize;
@@ -5100,17 +4805,9 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Sendrecv_replace( buf, count, datatype, dest, sendtag, source, 
-                           recvtag, comm, status )
-void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int sendtag;
-int source;
-int recvtag;
-MPI_Comm comm;
-MPI_Status * status;
+int  MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype,
+                          int dest, int sendtag, int source, int recvtag,
+                          MPI_Comm comm, MPI_Status *status)
 {
   int  returnVal;
   int  acount, sendsize;
@@ -5167,13 +4864,8 @@ MPI_Status * status;
   return returnVal;
 }
 
-int  MPI_Ssend( buf, count, datatype, dest, tag, comm )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
+int  MPI_Ssend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+               int dest, int tag, MPI_Comm comm)
 {
   int  returnVal, size;
   MPE_LOG_STATE_DECL
@@ -5209,14 +4901,8 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int  MPI_Ssend_init( buf, count, datatype, dest, tag, comm, request )
-MPE_CONST void * buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request * request;
+int  MPI_Ssend_init(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+                    int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5251,8 +4937,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Start( request )
-MPI_Request * request;
+int  MPI_Start(MPI_Request *request)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5287,9 +4972,7 @@ MPI_Request * request;
   return returnVal;
 }
 
-int  MPI_Startall( count, array_of_requests )
-int count;
-MPI_Request * array_of_requests;
+int  MPI_Startall(int count, MPI_Request *array_of_requests )
 {
   int  returnVal;
   int  i;
@@ -5326,10 +5009,7 @@ MPI_Request * array_of_requests;
   return returnVal;
 }
 
-int   MPI_Test( request, flag, status )
-MPI_Request * request;
-int * flag;
-MPI_Status * status;
+int   MPI_Test(MPI_Request *request, int *flag, MPI_Status *status)
 {
     int   returnVal;
     MPI_Request lreq = *request;
@@ -5372,11 +5052,8 @@ MPI_Status * status;
     return returnVal;
 }
 
-int  MPI_Testall( count, array_of_requests, flag, array_of_statuses )
-int count;
-MPI_Request * array_of_requests;
-int * flag;
-MPI_Status * array_of_statuses;
+int  MPI_Testall(int count, MPI_Request *array_of_requests, int *flag,
+                 MPI_Status *array_of_statuses)
 {
     int  returnVal;
     int  i;
@@ -5449,12 +5126,8 @@ MPI_Status * array_of_statuses;
     return returnVal;
 }
 
-int  MPI_Testany( count, array_of_requests, index, flag, status )
-int count;
-MPI_Request * array_of_requests;
-int * index;
-int * flag;
-MPI_Status * status;
+int  MPI_Testany(int count, MPI_Request *array_of_requests, int *index,
+                 int *flag, MPI_Status *status)
 {
     int  returnVal;
     int i;
@@ -5521,9 +5194,7 @@ MPI_Status * status;
     return returnVal;
 }
 
-int  MPI_Test_cancelled( status, flag )
-MPE_CONST MPI_Status * status;
-int * flag;
+int  MPI_Test_cancelled(MPE_CONST MPI_Status *status, int *flag)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5556,13 +5227,8 @@ int * flag;
   return returnVal;
 }
 
-int  MPI_Testsome( incount, array_of_requests, outcount, 
-                   array_of_indices, array_of_statuses )
-int incount;
-MPI_Request * array_of_requests;
-int * outcount;
-int * array_of_indices;
-MPI_Status * array_of_statuses;
+int  MPI_Testsome(int incount, MPI_Request *array_of_requests, int *outcount,
+                  int *array_of_indices, MPI_Status *array_of_statuses)
 {
     int  returnVal;
     int  i;
@@ -5638,8 +5304,7 @@ MPI_Status * array_of_statuses;
     return returnVal;
 }
 
-int   MPI_Type_commit( datatype )
-MPI_Datatype * datatype;
+int   MPI_Type_commit(MPI_Datatype *datatype)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -5672,10 +5337,8 @@ MPI_Datatype * datatype;
   return returnVal;
 }
 
-int  MPI_Type_contiguous( count, old_type, newtype )
-int count;
-MPI_Datatype old_type;
-MPI_Datatype * newtype;
+int  MPI_Type_contiguous(int count, MPI_Datatype old_type,
+                         MPI_Datatype *newtype)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5708,9 +5371,7 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int  MPI_Type_extent( datatype, extent )
-MPI_Datatype datatype;
-MPI_Aint * extent;
+int  MPI_Type_extent(MPI_Datatype datatype, MPI_Aint *extent)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5743,8 +5404,7 @@ MPI_Aint * extent;
   return returnVal;
 }
 
-int   MPI_Type_free( datatype )
-MPI_Datatype * datatype;
+int   MPI_Type_free(MPI_Datatype *datatype)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -5777,12 +5437,9 @@ MPI_Datatype * datatype;
   return returnVal;
 }
 
-int  MPI_Type_hindexed( count, blocklens, indices, old_type, newtype )
-int count;
-MPE_CONST int * blocklens;
-MPE_CONST MPI_Aint * indices;
-MPI_Datatype old_type;
-MPI_Datatype * newtype;
+int  MPI_Type_hindexed(int count, MPE_CONST int *blocklens,
+                       MPE_CONST MPI_Aint *indices,
+                       MPI_Datatype old_type, MPI_Datatype *newtype)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5816,12 +5473,8 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int  MPI_Type_hvector( count, blocklen, stride, old_type, newtype )
-int count;
-int blocklen;
-MPI_Aint stride;
-MPI_Datatype old_type;
-MPI_Datatype * newtype;
+int  MPI_Type_hvector(int count, int blocklen, MPI_Aint stride,
+                      MPI_Datatype old_type, MPI_Datatype *newtype)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5854,12 +5507,9 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int  MPI_Type_indexed( count, blocklens, indices, old_type, newtype )
-int count;
-MPE_CONST int * blocklens;
-MPE_CONST int * indices;
-MPI_Datatype old_type;
-MPI_Datatype * newtype;
+int  MPI_Type_indexed(int count, MPE_CONST int *blocklens,
+                      MPE_CONST int *indices, MPI_Datatype old_type,
+                      MPI_Datatype *newtype)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5892,9 +5542,7 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int   MPI_Type_lb( datatype, displacement )
-MPI_Datatype datatype;
-MPI_Aint * displacement;
+int   MPI_Type_lb(MPI_Datatype datatype, MPI_Aint *displacement)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -5927,9 +5575,7 @@ MPI_Aint * displacement;
   return returnVal;
 }
 
-int   MPI_Type_size( datatype, size )
-MPI_Datatype datatype;
-int          * size;
+int   MPI_Type_size(MPI_Datatype datatype, int *size)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -5962,12 +5608,9 @@ int          * size;
   return returnVal;
 }
 
-int  MPI_Type_struct( count, blocklens, indices, old_types, newtype )
-int count;
-MPE_CONST int * blocklens;
-MPE_CONST MPI_Aint * indices;
-MPE_CONST MPI_Datatype * old_types;
-MPI_Datatype * newtype;
+int  MPI_Type_struct(int count, MPE_CONST int *blocklens,
+                     MPE_CONST MPI_Aint *indices,
+                     MPE_CONST MPI_Datatype *old_types, MPI_Datatype *newtype )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -6000,9 +5643,7 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int   MPI_Type_ub( datatype, displacement )
-MPI_Datatype datatype;
-MPI_Aint * displacement;
+int   MPI_Type_ub(MPI_Datatype datatype, MPI_Aint *displacement)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6035,12 +5676,8 @@ MPI_Aint * displacement;
   return returnVal;
 }
 
-int  MPI_Type_vector( count, blocklen, stride, old_type, newtype )
-int count;
-int blocklen;
-int stride;
-MPI_Datatype old_type;
-MPI_Datatype * newtype;
+int  MPI_Type_vector(int count, int blocklen, int stride, MPI_Datatype old_type,
+                     MPI_Datatype *newtype)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -6073,14 +5710,8 @@ MPI_Datatype * newtype;
   return returnVal;
 }
 
-int   MPI_Unpack( inbuf, insize, position, outbuf, outcount, type, comm )
-MPE_CONST void * inbuf;
-int insize;
-int * position;
-void * outbuf;
-int outcount;
-MPI_Datatype type;
-MPI_Comm comm;
+int   MPI_Unpack(MPE_CONST void *inbuf, int insize, int *position,
+                 void *outbuf, int outcount, MPI_Datatype type, MPI_Comm comm)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6114,9 +5745,7 @@ MPI_Comm comm;
   return returnVal;
 }
 
-int   MPI_Wait( request, status )
-MPI_Request * request;
-MPI_Status * status;
+int   MPI_Wait(MPI_Request *request, MPI_Status *status)
 {
     int          returnVal;
     MPI_Request  lreq = *request;
@@ -6158,10 +5787,8 @@ MPI_Status * status;
     return returnVal;
 }
 
-int  MPI_Waitall( count, array_of_requests, array_of_statuses )
-int count;
-MPI_Request * array_of_requests;
-MPI_Status * array_of_statuses;
+int  MPI_Waitall(int count, MPI_Request *array_of_requests,
+                 MPI_Status *array_of_statuses )
 {
     int  returnVal;
     int  i;
@@ -6234,11 +5861,8 @@ MPI_Status * array_of_statuses;
     return returnVal;
 }
 
-int  MPI_Waitany( count, array_of_requests, index, status )
-int count;
-MPI_Request * array_of_requests;
-int * index;
-MPI_Status * status;
+int  MPI_Waitany(int count, MPI_Request *array_of_requests, int *index,
+                 MPI_Status *status)
 {
     int  returnVal;
     int  i;
@@ -6304,13 +5928,8 @@ MPI_Status * status;
     return returnVal;
 }
 
-int  MPI_Waitsome( incount, array_of_requests, outcount,
-                   array_of_indices, array_of_statuses )
-int incount;
-MPI_Request * array_of_requests;
-int * outcount;
-int * array_of_indices;
-MPI_Status * array_of_statuses;
+int  MPI_Waitsome(int incount, MPI_Request *array_of_requests, int *outcount,
+                  int *array_of_indices, MPI_Status *array_of_statuses)
 {
     int  returnVal;
     int  i;
@@ -6386,11 +6005,7 @@ MPI_Status * array_of_statuses;
     return returnVal;
 }
 
-int   MPI_Cart_coords( comm, rank, maxdims, coords )
-MPI_Comm comm;
-int rank;
-int maxdims;
-int * coords;
+int   MPI_Cart_coords(MPI_Comm comm, int rank, int maxdims, int *coords)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6423,13 +6038,8 @@ int * coords;
   return returnVal;
 }
 
-int   MPI_Cart_create( comm_old, ndims, dims, periods, reorder, comm_cart )
-MPI_Comm comm_old;
-int ndims;
-MPE_CONST int * dims;
-MPE_CONST int * periods;
-int reorder;
-MPI_Comm * comm_cart;
+int   MPI_Cart_create(MPI_Comm comm_old, int ndims, MPE_CONST int *dims,
+                      MPE_CONST int *periods, int reorder, MPI_Comm *comm_cart)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6466,12 +6076,8 @@ MPI_Comm * comm_cart;
   return returnVal;
 }
 
-int   MPI_Cart_get( comm, maxdims, dims, periods, coords )
-MPI_Comm comm;
-int maxdims;
-int * dims;
-int * periods;
-int * coords;
+int   MPI_Cart_get(MPI_Comm comm, int maxdims, int *dims, int *periods,
+                   int *coords)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6504,12 +6110,8 @@ int * coords;
   return returnVal;
 }
 
-int   MPI_Cart_map( comm_old, ndims, dims, periods, newrank )
-MPI_Comm comm_old;
-int ndims;
-MPE_CONST int * dims;
-MPE_CONST int * periods;
-int * newrank;
+int   MPI_Cart_map(MPI_Comm comm_old, int ndims, MPE_CONST int *dims,
+                   MPE_CONST int *periods, int *newrank)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6542,10 +6144,7 @@ int * newrank;
   return returnVal;
 }
 
-int   MPI_Cart_rank( comm, coords, rank )
-MPI_Comm comm;
-MPE_CONST int * coords;
-int * rank;
+int   MPI_Cart_rank(MPI_Comm comm, MPE_CONST int *coords, int *rank)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6578,12 +6177,8 @@ int * rank;
   return returnVal;
 }
 
-int   MPI_Cart_shift( comm, direction, displ, source, dest )
-MPI_Comm comm;
-int direction;
-int displ;
-int * source;
-int * dest;
+int   MPI_Cart_shift(MPI_Comm comm, int direction, int displ,
+                     int *source, int *dest)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6616,10 +6211,8 @@ int * dest;
   return returnVal;
 }
 
-int   MPI_Cart_sub( comm, remain_dims, comm_new )
-MPI_Comm comm;
-MPE_CONST int * remain_dims;
-MPI_Comm * comm_new;
+int   MPI_Cart_sub(MPI_Comm comm, MPE_CONST int *remain_dims,
+                   MPI_Comm *comm_new)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6655,9 +6248,7 @@ MPI_Comm * comm_new;
   return returnVal;
 }
 
-int   MPI_Cartdim_get( comm, ndims )
-MPI_Comm comm;
-int * ndims;
+int   MPI_Cartdim_get(MPI_Comm comm, int *ndims)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6690,10 +6281,7 @@ int * ndims;
   return returnVal;
 }
 
-int  MPI_Dims_create( nnodes, ndims, dims )
-int nnodes;
-int ndims;
-int * dims;
+int  MPI_Dims_create(int nnodes, int ndims, int *dims)
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -6726,13 +6314,8 @@ int * dims;
   return returnVal;
 }
 
-int   MPI_Graph_create( comm_old, nnodes, index, edges, reorder, comm_graph )
-MPI_Comm comm_old;
-int nnodes;
-MPE_CONST int * index;
-MPE_CONST int * edges;
-int reorder;
-MPI_Comm * comm_graph;
+int   MPI_Graph_create(MPI_Comm comm_old, int nnodes, MPE_CONST int *index,
+                       MPE_CONST int *edges, int reorder, MPI_Comm *comm_graph)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6769,12 +6352,8 @@ MPI_Comm * comm_graph;
   return returnVal;
 }
 
-int   MPI_Graph_get( comm, maxindex, maxedges, index, edges )
-MPI_Comm comm;
-int maxindex;
-int maxedges;
-int * index;
-int * edges;
+int   MPI_Graph_get(MPI_Comm comm, int maxindex, int maxedges,
+                    int *index, int *edges)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6807,12 +6386,8 @@ int * edges;
   return returnVal;
 }
 
-int   MPI_Graph_map( comm_old, nnodes, index, edges, newrank )
-MPI_Comm comm_old;
-int nnodes;
-MPE_CONST int * index;
-MPE_CONST int * edges;
-int * newrank;
+int   MPI_Graph_map(MPI_Comm comm_old, int nnodes, MPE_CONST int *index,
+                    MPE_CONST int *edges, int *newrank)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6845,11 +6420,8 @@ int * newrank;
   return returnVal;
 }
 
-int   MPI_Graph_neighbors( comm, rank, maxneighbors, neighbors )
-MPI_Comm comm;
-int rank;
-int maxneighbors;
-int * neighbors;
+int   MPI_Graph_neighbors(MPI_Comm comm, int rank, int maxneighbors,
+                          int *neighbors)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6882,10 +6454,7 @@ int * neighbors;
   return returnVal;
 }
 
-int   MPI_Graph_neighbors_count( comm, rank, nneighbors )
-MPI_Comm comm;
-int rank;
-int * nneighbors;
+int   MPI_Graph_neighbors_count(MPI_Comm comm, int rank, int *nneighbors)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6918,10 +6487,7 @@ int * nneighbors;
   return returnVal;
 }
 
-int   MPI_Graphdims_get( comm, nnodes, nedges )
-MPI_Comm comm;
-int * nnodes;
-int * nedges;
+int   MPI_Graphdims_get(MPI_Comm comm, int *nnodes, int *nedges)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL
@@ -6954,9 +6520,7 @@ int * nedges;
   return returnVal;
 }
 
-int   MPI_Topo_test( comm, top_type )
-MPI_Comm comm;
-int * top_type;
+int   MPI_Topo_test(MPI_Comm comm, int *top_type)
 {
   int   returnVal;
   MPE_LOG_STATE_DECL

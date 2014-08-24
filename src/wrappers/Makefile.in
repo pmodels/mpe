@@ -29,7 +29,7 @@ all: build_include build_etc
 
 #######  Building from the source
 build_include:
-	@-if [ -n "$(includebuild_dir)" ] ; then \
+	@if [ -n "$(includebuild_dir)" ] ; then \
 	      if [ ! -d $(includebuild_dir) ] ; then \
 	          $(MKDIR) -p $(includebuild_dir) ; \
 	      fi ; \
@@ -49,7 +49,7 @@ build_lib_bin:
 	@( cd src && $(MAKE) $(MAKEOPTS) )
 
 build_etc:
-	@-for file in ./etc/*.conf ; do \
+	@for file in ./etc/*.conf ; do \
 	      $(CP) -f $$file $(etcbuild_dir) ; \
 	  done
 
@@ -102,3 +102,8 @@ maintainer-clean: distclean
 
 owner-clean: maintainer-clean
 	@-$(RM) -f configure
+
+configure mpe_wrappers_conf.h.in: configure.ac
+	autoheader
+	autoconf
+

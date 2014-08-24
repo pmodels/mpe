@@ -105,7 +105,7 @@ int kill(pid_t pid, int sig);
 #endif
 #endif
 
-void MPE_Start_debugger( )
+void MPE_Start_debugger(void)
 {
 int child, i;
 
@@ -235,8 +235,7 @@ char     *string, *file;
 
     Currently, there is no Fortran interface for this routine.
 @*/
-void MPE_Errors_call_debugger( pgm, dbg, args )
-char *pgm, *dbg, **args;
+void MPE_Errors_call_debugger(char *pgm, char *dbg, char **args)
 {
 MPI_Errhandler err;
 int            i;
@@ -275,8 +274,7 @@ static char *MPER_Copy_string( char *str )
     return new;
 }
 
-void MPE_Errors_call_xdbx( pgm, display )
-char *pgm, *display;
+void MPE_Errors_call_xdbx(char *pgm, char *display)
 {
     char **args;
 
@@ -301,8 +299,7 @@ char *pgm, *display;
 }
 
 /* This routine is collective; all processes in MPI_COMM_WORLD must call */
-void MPE_Errors_call_dbx_in_xterm( pgm, display )
-char *pgm, *display;
+void MPE_Errors_call_dbx_in_xterm(char *pgm, char *display)
 {
     char **args;
     int  myid, str_len;
@@ -345,8 +342,7 @@ char *pgm, *display;
 }
 
 /* This routine is collective; all processes in MPI_COMM_WORLD must call */
-void MPE_Errors_call_gdb_in_xterm( pgm, display )
-char *pgm, *display;
+void MPE_Errors_call_gdb_in_xterm(char *pgm, char *display)
 {
     char **args;
     int  myid, str_len;
@@ -405,8 +401,7 @@ static char *SIGNAME[] = { "Unknown", "HUP", "INT", "QUIT", "ILL",
 #if defined(HAVE_SIGHANDLER_T) 
 #define SIG_HANDLER_PROTOTYPE sighandler_t
 void MPE_DefaultHandler ( SIG_HANDLER_PROTOTYPE );
-void MPE_DefaultHandler( sig )
-int               sig
+void MPE_DefaultHandler(int sig)
 #elif defined(MPI_sun4)
 #define SIG_HANDLER_PROTOTYPE int, int, struct sigcontext *, char *
 void MPE_DefaultHandler ( SIG_HANDLER_PROTOTYPE );
@@ -455,7 +450,7 @@ MPE_Start_debugger( );
 
     Currently, there is no Fortran interface for this routine.
 @*/
-void MPE_Signals_call_debugger()
+void MPE_Signals_call_debugger(void)
 {
 signal( SIGQUIT, (void (*)(SIG_HANDLER_PROTOTYPE))
 	MPE_DefaultHandler );
@@ -477,21 +472,19 @@ signal( SIGSYS,  (void (*)(SIG_HANDLER_PROTOTYPE))
 #else
 /* Some systems don't support SIGSTOP; for them, we just issue a warning 
    message ... */
-void MPE_Errors_call_dbx_in_xterm( pgm, display )
-char *pgm, *display;
+void MPE_Errors_call_dbx_in_xterm(char *pgm, char *display)
 {
     fprintf( stderr, 
 	     "This system does not support SIGSTOP, needed to implement\n\
 calling of the debugger from a this program.\n" );
 }
-void MPE_Errors_call_gdb_in_xterm( pgm, display )
-char *pgm, *display;
+void MPE_Errors_call_gdb_in_xterm(char *pgm, char *display)
 {
     fprintf( stderr, 
 	     "This system does not support SIGSTOP, needed to implement\n\
 calling of the debugger from a this program.\n" );
 }
-void MPE_Signals_call_debugger()
+void MPE_Signals_call_debugger(void)
 {
 }
 

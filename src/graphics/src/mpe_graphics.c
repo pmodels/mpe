@@ -134,13 +134,9 @@ N*/
     The trailing blanks in Fortran CHARACTER string argument will be
     ignored.
 @*/
-int MPE_Open_graphics( handle, comm, display, x, y, w, h, is_collective )
-MPE_XGraph *handle;
-MPI_Comm   comm;
-char       display[MPI_MAX_PROCESSOR_NAME+4];
-int        x, y;
-int        w, h;
-int        is_collective;
+int MPE_Open_graphics(MPE_XGraph *handle, MPI_Comm comm, char display[],
+		      int x, int y, int w, int h, int is_collective)
+/* char       display[MPI_MAX_PROCESSOR_NAME+4]; */
 {
 
 #ifndef MPE_NOMPI
@@ -389,10 +385,7 @@ static void SetBackingStoreBitGrav( MPE_XGraph graph )
     The trailing blanks in Fortran 'CHARACTER' string argument will be
     ignored.
 @*/
-int MPE_CaptureFile( handle, fname, freq )
-MPE_XGraph handle;
-char       *fname;
-int        freq;
+int MPE_CaptureFile(MPE_XGraph handle, char *fname, int freq)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -429,10 +422,7 @@ int        freq;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Draw_point( handle, x, y, color )
-MPE_XGraph handle;
-int        x, y;
-MPE_Color  color;
+int MPE_Draw_point(MPE_XGraph handle, int x, int y, MPE_Color color)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -463,10 +453,7 @@ MPE_Color  color;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Draw_points( handle, points, npoints )
-MPE_XGraph handle;
-MPE_Point *points;
-int npoints;
+int MPE_Draw_points(MPE_XGraph handle, MPE_Point *points, int npoints)
 {
   XPoint *sortedPoints;
   int *colorRanges, ncolors, colorNum, n;
@@ -538,11 +525,9 @@ int npoints;
 
 
 
-static void SortPoints( lista, a, listb, colorList, boundaryPoints, ncolors )
-MPE_Point *lista;
-XPoint **listb;
-MPE_Color **colorList;
-int a, **boundaryPoints, *ncolors;
+static void SortPoints(MPE_Point *lista, int a, XPoint **listb,
+		       MPE_Color **colorList, int **boundaryPoints,
+		       int *ncolors)
 {
   int top, bottom, outoforder;
   MPE_Color thisColor, tempColor, *keyList;
@@ -642,10 +627,8 @@ int a, **boundaryPoints, *ncolors;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Draw_line( handle, x1, y_1, x2, y_2, color )
-MPE_XGraph handle;
-int        x1, y_1, x2, y_2;
-MPE_Color  color;
+int MPE_Draw_line(MPE_XGraph handle, int x1, int y_1, int x2, int y_2,
+		  MPE_Color color)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -686,10 +669,8 @@ MPE_Color  color;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Fill_rectangle( handle, x, y, w, h, color )
-MPE_XGraph handle;
-int        x, y, w, h;
-MPE_Color  color;
+int MPE_Fill_rectangle(MPE_XGraph handle, int x, int y, int w, int h,
+		       MPE_Color color)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -724,8 +705,7 @@ MPE_Color  color;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Update( handle )
-MPE_XGraph handle;
+int MPE_Update(MPE_XGraph handle)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -784,8 +764,7 @@ MPE_XGraph handle;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Close_graphics( handle )
-MPE_XGraph *handle;
+int MPE_Close_graphics(MPE_XGraph *handle)
 {
   if (!handle || !*handle || (*handle)->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -816,10 +795,7 @@ MPE_XGraph *handle;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Make_color_array( handle, ncolors, array )
-MPE_XGraph handle;
-int        ncolors;
-MPE_Color  array[];
+int MPE_Make_color_array(MPE_XGraph handle, int ncolors, MPE_Color array[] )
 {
   int    i;
   PixVal white;
@@ -869,9 +845,7 @@ MPE_Color  array[];
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Num_colors( handle, nc )
-MPE_XGraph handle;
-int        *nc;
+int MPE_Num_colors(MPE_XGraph handle, int *nc)
 {
   if (handle->Cookie != MPE_G_COOKIE) {
     fprintf( stderr, "Handle argument is incorrect or corrupted\n" );
@@ -893,10 +867,8 @@ int        *nc;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Draw_circle( graph, centerx, centery, radius, color )
-MPE_XGraph graph;
-int centerx, centery, radius;
-MPE_Color color;
+int MPE_Draw_circle(MPE_XGraph graph, int centerx, int centery, int radius,
+		    MPE_Color color)
 {
   int returnVal;
 
@@ -932,10 +904,8 @@ MPE_Color color;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Fill_circle( graph, centerx, centery, radius, color )
-MPE_XGraph graph;
-int centerx, centery, radius;
-MPE_Color color;
+int MPE_Fill_circle(MPE_XGraph graph, int centerx, int centery, int radius,
+		    MPE_Color color)
 {
   int returnVal;
 
@@ -968,11 +938,8 @@ MPE_Color color;
     The trailing blanks in Fortran CHARACTER string argument will be
     ignored.
 @*/
-int MPE_Draw_string( graph, x, y, color, string )
-MPE_XGraph graph;
-int x, y;
-MPE_Color color;
-char *string;
+int MPE_Draw_string(MPE_XGraph graph, int x, int y, MPE_Color color,
+		    char *string)
 {
   int returnVal;
 
@@ -1006,9 +973,7 @@ char *string;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Draw_logic( graph, function )
-MPE_XGraph graph;
-int function;
+int MPE_Draw_logic(MPE_XGraph graph, int function)
 {
   int returnVal;
   if (graph->Cookie != MPE_G_COOKIE) {
@@ -1033,9 +998,7 @@ int function;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Line_thickness( graph, thickness )
-MPE_XGraph graph;
-int thickness;
+int MPE_Line_thickness(MPE_XGraph graph, int thickness)
 {
   XGCValues gcChanges;
 
@@ -1048,9 +1011,7 @@ int thickness;
 
 
 
-int MPE_Draw_dashes( graph, dashlen )
-MPE_XGraph graph;
-int dashlen;
+int MPE_Draw_dashes(MPE_XGraph graph, int dashlen)
 {
   XGCValues gcChanges;
 
@@ -1070,9 +1031,7 @@ int dashlen;
 }
 
 
-int MPE_Dash_offset( graph, offset )
-MPE_XGraph graph;
-int offset;
+int MPE_Dash_offset(MPE_XGraph graph, int offset)
 {
   XGCValues gcChanges;
 
@@ -1107,10 +1066,8 @@ int offset;
 
 .N XGRAPHICS_FORTRAN
 @*/
-int MPE_Add_RGB_color( graph, red, green, blue, mapping )
-MPE_XGraph graph;
-int red, green, blue;
-MPE_Color *mapping;
+int MPE_Add_RGB_color(MPE_XGraph graph, int red, int green, int blue,
+		      MPE_Color *mapping)
 {
   XColor colordef;
 
@@ -1175,8 +1132,7 @@ int MPE_Xerror( int returnVal, const char *functionName )
 }
 
 
-static xpand_list_Int *Int_CreateList(initialLen)
-int initialLen;
+static xpand_list_Int *Int_CreateList(int initialLen)
 {
   xpand_list_Int *tempPtr;
 
@@ -1198,9 +1154,7 @@ int initialLen;
 }
 
 
-static int Int_AddItem(listPtr, newItem)
-xpand_list_Int *listPtr;
-int newItem;
+static int Int_AddItem(xpand_list_Int *listPtr, int newItem)
 {
   int *tmp;
   if (listPtr->nused == listPtr->size) {

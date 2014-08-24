@@ -12,6 +12,14 @@ AC_PREREQ(2.52)
 AC_CONFIG_HEADER(mpe_graphics_conf.h)
 dnl
 echo "Configuring MPE X Graphics Library with $ac_configure_args"
+AH_BOTTOM([
+/* Define MPE_CONST=const if mpi.h uses const in MPI function declaration. */
+#if defined(HAVE_CONST_IN_MPI_DECL) || MPI_VERSION >= 3
+#define MPE_CONST const
+#else
+#define MPE_CONST
+#endif
+])
 dnl
 dnl Set top_srcdir_abs to be the ABSOLUTE path to the home directory of MPE
 dnl top_srcdir is in relative path.
@@ -32,6 +40,13 @@ AC_ARG_ENABLE( softerror,
                                      issuing MSG_ERROR, MSG_WARN + exit 0
                                      are used.  The default is enable=no.],
 , enable_softerror=${mpe_enable_softerror:-no} )
+
+AC_ARG_ENABLE( checkMPI,
+[--enable-checkMPI                  - Turn on/off the linking test for the MPI
+                                     include files, MPI libraries and MPI_CC
+                                     compiler. The default is enable=yes.], ,
+enable_checkMPI=yes )
+
 
 MAKE=${MAKE:-make}
 MPI_IMPL=${MPI_IMPL:-UserSupplied}
@@ -233,6 +248,27 @@ if test "$MPE_BUILD_FORTRAN2C" = "yes" ; then
                    [Define if MPI_Comm_f2c and c2f available] )
     fi
 fi
+
+dnl Check if MPI implementation uses const in function declaration
+if test "$enable_checkMPI" = "yes" ; then
+    AC_MSG_CHECKING( [for the use of const in MPI function declaration] )
+    PAC_MPI_COMPILE_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], [], [],
+                                 [
+int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
+             int dest, int tag, MPI_Comm comm)
+{
+    return 0;
+}
+                                 ],
+                                 [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+    if test "$mpe_link_ok" = "yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
+    else
+        AC_MSG_RESULT(no)
+    fi
+fi
+
 
 if test ! -d contrib ; then mkdir contrib ; fi
 

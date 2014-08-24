@@ -2458,8 +2458,7 @@ void mpi_scatterv_ ( void *sendbuf, MPI_Fint *sendcnts,
 }
 
 void mpi_finalize_ ( int * );
-void mpi_finalize_( ierr )
-int *ierr; 
+void mpi_finalize_( int *ierr )
 {
     *ierr = MPI_Finalize();
 }

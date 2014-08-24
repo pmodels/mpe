@@ -40,11 +40,8 @@ return MPE_SUCCESS;
 }
 
 int MPE_ClrKeyCallback( MPE_XGraph, int );
-int MPE_ClrKeyCallback( graph, key )
-MPE_XGraph graph;
-int        key;
+int MPE_ClrKeyCallback(MPE_XGraph graph, int key)
 {
-
 return MPE_SUCCESS;
 }
 

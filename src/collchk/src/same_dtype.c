@@ -529,6 +529,10 @@ int CollChk_dtype_scatter(MPI_Comm comm,
         CollChk_dtype_hash(sendtype, sendcnt, &root_hash);
 
     /* broadcast root's datatype hash to all other processes */
+    /* Note: root_hash is really a structure of two unsigneds, so it is
+       a happy coincidence that we should be able to send it as
+       2 MPI_UNSIGNED.  Some versions of MPICH will complain about
+       a compile-time type mismatch here */
     PMPI_Bcast(&root_hash, 2, MPI_UNSIGNED, root, comm);
 
     /* Compare root_hash with the input/local hash */

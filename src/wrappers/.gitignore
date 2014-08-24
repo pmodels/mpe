@@ -1,0 +1,5 @@
+mpe_wrappers_conf.h.in
+mpe_wrappers_conf.h
+etc/mpe_f77env.conf
+etc/mpe_mpilog.conf
+etc/mpe_mpitrace.conf

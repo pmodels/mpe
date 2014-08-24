@@ -25,10 +25,7 @@
 int XBHlsHelper ( int, int, int );
 
 /* cmap is ignored for now? */
-void XBInitColors( XBWin, cmap, nc )
-XBWindow *XBWin;
-Colormap cmap;
-int      nc;
+void XBInitColors(XBWindow *XBWin, Colormap cmap, int nc)
 {
     PixVal   white_pixel, black_pixel;
 
@@ -65,8 +62,7 @@ int      nc;
 /*
     Set the initial color map
  */
-int XBInitCmap( XBWin )
-XBWindow *XBWin;
+int XBInitCmap(XBWindow *XBWin)
 {
     XColor  colordef;
     int     i;
@@ -92,10 +88,8 @@ XBWindow *XBWin;
  * The input to this routine is RGB, not HLS.
  * X colors are 16 bits, not 8, so we have to shift the input by 8.
  */
-int XBCmap( red, green, blue, mapsize, XBWin )
-int           mapsize;
-unsigned char red[], green[], blue[];
-XBWindow      *XBWin;
+int XBCmap(unsigned char red[], unsigned char green[], unsigned char blue[],
+	   int mapsize, XBWindow *XBWin)
 {
     int         i, err;
     XColor      colordef;
@@ -208,8 +202,7 @@ XBWindow      *XBWin;
 	GrayScale
 	StaticGray
  */
-int XBSetVisualClass( XBWin )
-XBWindow *XBWin;
+int XBSetVisualClass(XBWindow *XBWin)
 {
     XVisualInfo vinfo;
     if (XMatchVisualInfo( XBWin->disp, XBWin->screen, 
@@ -233,17 +226,13 @@ XBWindow *XBWin;
     return 0;
 }
 
-int XBGetVisualClass( XBWin )
-XBWindow *XBWin;
+int XBGetVisualClass( XBWindow *XBWin )
 {
     return XBWin->vis->class;
 }
 
 /* Should pass this an XBWin */
-Colormap XBCreateColormap( display, screen, visual )
-Display *display;
-int      screen;
-Visual  *visual;
+Colormap XBCreateColormap(Display *display, int screen, Visual *visual)
 {
     Colormap Cmap;
 
@@ -256,17 +245,14 @@ Visual  *visual;
 }
 
 
-int XBSetColormap( XBWin )
-XBWindow *XBWin;
+int XBSetColormap(XBWindow *XBWin)
 {
     XSetWindowColormap( XBWin->disp, XBWin->win, XBWin->cmap );
     return 0;
 }
 
 
-int XBAllocBW( XBWin, white, black )
-XBWindow *XBWin;
-PixVal   *white, *black;
+int XBAllocBW(XBWindow *XBWin, PixVal *white, PixVal *black)
 {
     XColor  bcolor, wcolor;
     XParseColor( XBWin->disp, XBWin->cmap, "black", &bcolor );
@@ -286,9 +272,7 @@ PixVal   *white, *black;
 }
 
 
-int XBGetBaseColor( XBWin, white_pix, black_pix )
-XBWindow *XBWin;
-PixVal   *white_pix, *black_pix;
+int XBGetBaseColor(XBWindow *XBWin, PixVal *white_pix, PixVal *black_pix)
 {
     *white_pix  = XBWin->cmapping[WHITE];
     *black_pix  = XBWin->cmapping[BLACK];
@@ -309,17 +293,15 @@ PixVal   *white_pix, *black_pix;
 static double Gamma = 2.0;
 #include <math.h>
 
-int XBSetGamma( g )
-double g;
+int XBSetGamma( double g )
 {
     Gamma = g;
 
     return 0;
 }
 
-int XBSetCmapHue( red, green, blue, mapsize )
-int             mapsize;
-unsigned char   *red, *green, *blue;
+int XBSetCmapHue(unsigned char *red, unsigned char *green, unsigned char *blue,
+		 int mapsize)
 {
     int     i, hue, lightness, saturation;
     double  igamma = 1.0 / Gamma;
@@ -353,8 +335,7 @@ unsigned char   *red, *green, *blue;
  *   (0:255, 0:255, 0:255)
  *      r       g      b
  */
-int XBHlsHelper( h, n1, n2 )
-int     h, n1, n2;
+int XBHlsHelper(int h, int n1, int n2)
 {
 while (h > 360) h = h - 360;
 while (h < 0)   h = h + 360;
@@ -364,9 +345,8 @@ if (h < 240) return n1 + (n2-n1)*(240-h)/60;
 return n1;
 }
 
-int XBHlsToRgb( h, l, s, r, g, b )
-int             h, l, s;
-unsigned char   *r, *g, *b;
+int XBHlsToRgb(int h, int l, int s,
+	       unsigned char *r, unsigned char *g, unsigned char *b)
 {
 int m1, m2;         /* in 0 to 100 */
 if (l <= 50) m2 = l * ( 100 + s ) / 100 ;           /* not sure of "/100" */
@@ -392,10 +372,7 @@ return 0;
     This routine returns the pixel value for the specified color
     Returns 0 on failure, <>0 otherwise.
  */
-int XBFindColor( XBWin, name, pixval )
-XBWindow *XBWin;
-char     *name;
-PixVal   *pixval;
+int XBFindColor(XBWindow *XBWin, char *name, PixVal *pixval)
 {
     XColor   colordef;
     int      st;
@@ -424,10 +401,8 @@ PixVal   *pixval;
  * This is like XBCmap, except that it APPENDS to the existing
  * colormap.
  */
-int XBAddCmap( red, green, blue, mapsize, XBWin )
-int           mapsize;
-unsigned char red[], green[], blue[];
-XBWindow      *XBWin;
+int XBAddCmap(unsigned char red[], unsigned char green[], unsigned char blue[],
+	      int mapsize, XBWindow *XBWin)
 {
     int      i, err;
     XColor   colordef;
@@ -463,10 +438,7 @@ XBWindow      *XBWin;
     In the monchrome case (or if the color is otherwise unavailable),
     the "background" or "foreground" colors will be chosen
  */
-PixVal XBGetColor( XBWin, name, is_fore )
-XBWindow *XBWin;
-char     *name;
-int      is_fore;
+PixVal XBGetColor(XBWindow *XBWin, char *name, int is_fore)
 {
     PixVal pixval;
     if (XBWin->numcolors == 2 || !XBFindColor( XBWin, name, &pixval ))
@@ -478,10 +450,7 @@ int      is_fore;
    This routine takes a named color and returns a color that is either
    lighter or darker
  */
-PixVal XBSimColor( XBWin, pixel, intensity, is_fore )
-XBWindow *XBWin;
-PixVal   pixel;
-int      intensity, is_fore;
+PixVal XBSimColor(XBWindow *XBWin, PixVal pixel, int intensity, int is_fore)
 {
     XColor   colordef, colorsdef;
     char     RGBcolor[20];
@@ -532,9 +501,7 @@ int      intensity, is_fore;
   colormap is used.  The Pixel values chosen are in the cmapping 
   structure; this is used by routines such as the XB contour plotter.
   */  
-void XBUniformHues( XBwin, ncolors )
-XBWindow *XBwin;
-int      ncolors;
+void XBUniformHues(XBWindow *XBwin, int ncolors)
 {
     unsigned char *red, *green, *blue;
 
@@ -561,9 +528,8 @@ int      ncolors;
   Note:
   The initial color is (red[0],green[0],blue[0]).
   */
-void XBSetCmapLight( red, green, blue, mapsize )
-     int             mapsize;
-     unsigned char   *red, *green, *blue;
+void XBSetCmapLight(unsigned char *red, unsigned char *green,
+		    unsigned char *blue, int mapsize)
 {
   int     i ;
 

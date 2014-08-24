@@ -33,10 +33,8 @@
 
 
 void mpe_get_mouse_press_( MPE_XGraph*, int*, int*, int*, int* );
-void mpe_get_mouse_press_( graph, x, y, button, __ierr )
-MPE_XGraph *graph;
-int *x, *y, *button;
-int *__ierr;
+void mpe_get_mouse_press_( MPE_XGraph *graph, int *x, int *y, int *button, 
+			   int *__ierr )
 {
 *__ierr = MPE_Get_mouse_press(*graph,x,y,button);
 }
@@ -61,10 +59,8 @@ int *__ierr;
 #endif
 
 void mpe_iget_mouse_press_( MPE_XGraph*, int*, int*, int*, int*, int* );
-void mpe_iget_mouse_press_( graph, x, y, button, wasPressed, __ierr )
-MPE_XGraph *graph;
-int *x, *y, *button, *wasPressed;
-int *__ierr;
+void mpe_iget_mouse_press_( MPE_XGraph *graph, int *x, int *y, int *button,
+			    int *wasPressed, int *__ierr )
 {
 *__ierr = MPE_Iget_mouse_press(*graph,x,y,button,wasPressed);
 }

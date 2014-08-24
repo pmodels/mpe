@@ -10,9 +10,8 @@
     This routine waits until the window is actually created or destroyed
     Returns 0 if window is mapped; 1 if window is destroyed.
  */
-int XB_wait_map( XBWin, ExposeRoutine )
-XBWindow *XBWin;
-void     (*ExposeRoutine) ( XBWindow *, int, int, int, int );
+int XB_wait_map(XBWindow *XBWin,
+		void     (*ExposeRoutine) ( XBWindow *, int, int, int, int ))
 {
 XEvent  event;
 int     w, h;
@@ -57,8 +56,7 @@ while (1) {
     This routine reads a pixel from a window, thus insuring that everything
     has actually been drawn.  If the window is null, do ALL windows.
  */
-void XBSync( XBWin )
-XBWindow *XBWin;
+void XBSync(XBWindow *XBWin)
 {
    /*  XImage   *xi;  */
 

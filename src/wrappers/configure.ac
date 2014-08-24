@@ -5,21 +5,19 @@ dnl
 define([AC_CACHE_LOAD], )dnl
 define([AC_CACHE_SAVE], )dnl
 dnl
-AH_BOTTOM([
-/* Define MPE_CONST=const if mpi.h uses const in MPI function declaration. */
-#if defined(HAVE_CONST_IN_MPI_DECL)
-#define MPE_CONST const
-#else
-#define MPE_CONST
-#endif
-])
-dnl
-dnl
 AC_INIT()
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(mpe_wrappers_conf.h)
 dnl
 echo "Configuring MPE Wrapper Libraries For MPI with $ac_configure_args"
+AH_BOTTOM([
+/* Define MPE_CONST=const if mpi.h uses const in MPI function declaration. */
+#if defined(HAVE_CONST_IN_MPI_DECL) || MPI_VERSION >= 3
+#define MPE_CONST const
+#else
+#define MPE_CONST
+#endif
+])
 dnl
 dnl Set top_srcdir_abs to be the ABSOLUTE path to the home directory of MPE
 dnl top_srcdir is in relative path.
@@ -321,6 +319,7 @@ dnl     fortran link/run tests can be performed.
 fi
 
 dnl Check Safe PMPI invocations
+dnl FIXME: What does "safe" mean here?
 AC_MSG_CHECKING( [for safe PMPI invocations] )
 if test "$MPI_IMPL" = "MPICH" -o "$MPI_IMPL" = "MPICH2" ; then
     enable_safePMPI=no
@@ -333,10 +332,9 @@ else
 fi
 
 dnl Check if MPI implementation uses const in function declaration
-if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
-    if test "$enable_checkMPI" = "yes" ; then
-        AC_MSG_CHECKING( [for the use of const in MPI function declaration] )
-        PAC_MPI_COMPILE_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], [], [],
+if test "$enable_checkMPI" = "yes" ; then
+    AC_MSG_CHECKING( [for the use of const in MPI function declaration] )
+    PAC_MPI_COMPILE_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], [], [],
                                  [
 int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
              int dest, int tag, MPI_Comm comm)
@@ -345,59 +343,43 @@ int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
 }
                                  ],
                                  [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
-        if test "$mpe_link_ok" = "yes" ; then
-            AC_MSG_RESULT(yes)
-            AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
-        else
-            AC_MSG_RESULT(no)
-        fi
-    fi
-else
-dnl MPICH2 has MPI_Init_thread().
-    if test "$MPI_IMPL" = "MPICH2" ; then
-        AC_DEFINE(HAVE_MPI_INIT_THREAD, 1,
-                  [Define if MPI_Init_thread available])
+    if test "$mpe_link_ok" = "yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
+    else
+        AC_MSG_RESULT(no)
     fi
 fi
 
 dnl Check if Thread-support level in MPI implementation
-if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
-    if test "$enable_checkMPI" = "yes" ; then
-        AC_MSG_CHECKING( [for the C version of MPI_Init_thread] )
-        PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, ,
-                              [ int itmp; int thread_level ],
-                              [
+if test "$enable_checkMPI" = "yes" ; then
+    AC_MSG_CHECKING( [for the C version of MPI_Init_thread] )
+    PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, ,
+                          [ int itmp; int thread_level ],
+                          [
     itmp=MPI_Init_thread( NULL, NULL, MPI_THREAD_MULTIPLE, &thread_level )
+                          ],
+                          [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+    if test "$mpe_link_ok" = "yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_MSG_CHECKING( [for the C version of PMPI_Init_thread] )
+        PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, ,
+                              [ int itmp; int thread_level],
+                              [
+    itmp=PMPI_Init_thread( NULL, NULL, MPI_THREAD_MULTIPLE, &thread_level )
                               ],
                               [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
         if test "$mpe_link_ok" = "yes" ; then
             AC_MSG_RESULT(yes)
-            AC_MSG_CHECKING( [for the C version of PMPI_Init_thread] )
-            PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, ,
-                                  [ int itmp; int thread_level],
-                                  [
-    itmp=PMPI_Init_thread( NULL, NULL, MPI_THREAD_MULTIPLE, &thread_level )
-                                  ],
-                                  [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
-            if test "$mpe_link_ok" = "yes" ; then
-                AC_MSG_RESULT(yes)
-                AC_DEFINE(HAVE_MPI_INIT_THREAD, 1,
-                          [Define if MPI_Init_thread available])
-            else
-                AC_MSG_RESULT(no)
-            fi
+            AC_DEFINE(HAVE_MPI_INIT_THREAD, 1,
+                      [Define if MPI_Init_thread available])
         else
             AC_MSG_RESULT(no)
         fi
-    fi
-else
-dnl MPICH2 has MPI_Init_thread().
-    if test "$MPI_IMPL" = "MPICH2" ; then
-        AC_DEFINE(HAVE_MPI_INIT_THREAD, 1,
-                  [Define if MPI_Init_thread available])
+    else
+        AC_MSG_RESULT(no)
     fi
 fi
-
 
 dnl Check MPI-IO
 if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then

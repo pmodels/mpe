@@ -20,8 +20,7 @@
   Output Parameters:
 . s,e - Array indices are s:e, with the original array considered as 1:n.  
 @*/
-int MPE_Decomp1d( n, size, rank, s, e )
-int n, size, rank, *s, *e;
+int MPE_Decomp1d( int n, int size, int rank, int *s, int *e )
 {
     int nlocal, deficit;
 

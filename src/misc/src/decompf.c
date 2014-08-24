@@ -32,9 +32,7 @@
 
 void mpe_decomp1d_ ( int*, int *, int *, int *, int *, int * );
 
- void mpe_decomp1d_( n, size, rank, s, e, __ierr )
-int*n,*size,*rank, *s, *e;
-int *__ierr;
+void mpe_decomp1d_( int *n, int *size, int *rank, int *s, int *e, int *__ierr )
 {
     *__ierr = MPE_Decomp1d(*n,*size,*rank,s,e);
 }

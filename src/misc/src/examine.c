@@ -33,11 +33,8 @@ int MPIR_PrintDatatypeUnpack ( FILE *, int, MPI_Datatype, long, long );
   This prints on the selected file the operations that the MPICH 
   implementation will take when unpacking a buffer.
 @*/
-int MPE_Print_datatype_unpack_action( fp, count, type, in_offset, out_offset )
-FILE         *fp;
-int          count;
-MPI_Datatype type;
-int          in_offset, out_offset;
+int MPE_Print_datatype_unpack_action(FILE *fp, int count, MPI_Datatype type,
+				     int in_offset, int out_offset)
 {
     return MPIR_PrintDatatypeUnpack( fp, count, type, in_offset, out_offset );
 }
@@ -57,11 +54,8 @@ int          in_offset, out_offset;
   This prints on the selected file the operations that the MPICH 
   implementation will take when packing a buffer.
 @*/
-int MPE_Print_datatype_pack_action( fp, count, type, in_offset, out_offset )
-FILE         *fp;
-int          count;
-MPI_Datatype type;
-int          in_offset, out_offset;
+int MPE_Print_datatype_pack_action(FILE *fp, int count, MPI_Datatype type,
+				   int in_offset, int out_offset)
 {
     return MPIR_PrintDatatypePack ( fp, count, type, in_offset, out_offset );
 }
@@ -82,12 +76,9 @@ int          in_offset, out_offset;
 
 void mpe_print_datatype_unpack_action_ ( int *, int *, MPI_Datatype *,
                                          int *, int *, int * );
-void mpe_print_datatype_unpack_action_( fp, count, type,
-                                        in_offset, out_offset, __ierr )
-int *fp;
-int *count;
-MPI_Datatype *type;
-int          *in_offset, *out_offset, *__ierr;
+void mpe_print_datatype_unpack_action_(int *fp, int *count, MPI_Datatype *type,
+                                       int *in_offset, int *out_offset,
+				       int *__ierr )
 {
     *__ierr = MPE_Print_datatype_unpack_action( stdout, *count,*type,
                                                 *in_offset, *out_offset);
@@ -95,12 +86,9 @@ int          *in_offset, *out_offset, *__ierr;
 
 void mpe_print_datatype_pack_action_ ( int *, int *, MPI_Datatype *,
                                        int *, int *, int * );
-void mpe_print_datatype_pack_action_( fp, count, type, 
-                                        in_offset, out_offset, __ierr )
-int *fp;
-int *count;
-MPI_Datatype *type;
-int          *in_offset, *out_offset, *__ierr;
+void mpe_print_datatype_pack_action_(int *fp, int *count, MPI_Datatype *type,
+				     int *in_offset, int *out_offset,
+				     int *__ierr )
 {
     *__ierr = MPE_Print_datatype_pack_action( stdout, *count,*type,
                                               *in_offset, *out_offset);

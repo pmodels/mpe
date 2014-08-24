@@ -6,8 +6,8 @@
 #undef MPI_BUILD_PROFILING
 #endif
 #include <stdio.h>
-#include "mpe_wrappers_conf.h"
 #include "mpi.h"
+#include "mpe_wrappers_conf.h"
 #include "mpe_log.h"
 
 #define S_SEND_EVENT      256
@@ -69,9 +69,7 @@ static char logFileName[256];
 /*
     MPI_Init - replacement for MPI_Init
 */
-int MPI_Init( argc, argv )
-int *argc;
-char ***argv;
+int MPI_Init(int *argc, char ***argv)
 {
   int returnVal;
 
@@ -122,11 +120,8 @@ char ***argv;
 /*
     MPI_Send - prototyping replacement for MPI_Send
 */
-int MPI_Send( buf, count, datatype, dest, tag, comm )
-const void *buf;
-int count, dest, tag;
-MPI_Datatype datatype;
-MPI_Comm comm;
+int MPI_Send( MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	      int dest, int tag, MPI_Comm comm )
 {
   char mesgStr[100];
   int result;
@@ -144,12 +139,8 @@ MPI_Comm comm;
 /*
     MPI_Recv - prototyping replacement for MPI_Recv
 */
-int MPI_Recv( buf, count, datatype, source, tag, comm, status )
-void *buf;
-int count, source, tag;
-MPI_Datatype datatype;
-MPI_Comm comm;
-MPI_Status *status;
+int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag,
+	     MPI_Comm comm, MPI_Status *status)
 {
   char mesgStr[100];
   int result;
@@ -167,11 +158,8 @@ MPI_Status *status;
 /*
     MPI_Bcast - prototyping replacement for MPI_Bcast
 */
-int MPI_Bcast( buf, count, datatype, source, comm )
-void *buf;
-int count, source;
-MPI_Datatype datatype;
-MPI_Comm comm;
+int MPI_Bcast(void *buf, int count, MPI_Datatype datatype, int source,
+	      MPI_Comm comm)
 {
   int result;
 
@@ -187,13 +175,8 @@ MPI_Comm comm;
 /*
     MPI_Reduce - prototyping replacement for MPI_Reduce
 */
-int MPI_Reduce( sendbuf, recvbuf, count, datatype, op, root, comm )
-const void *sendbuf;
-void *recvbuf;
-int count, root;
-MPI_Op op;
-MPI_Datatype datatype;
-MPI_Comm comm;
+int MPI_Reduce(MPE_CONST void *sendbuf, void *recvbuf, int count,
+	       MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm)
 {
   int result;
 
@@ -208,13 +191,8 @@ MPI_Comm comm;
 /*
    MPI_Allreduce
  */
-int MPI_Allreduce ( sendbuf, recvbuf, count, datatype, op, comm )
-const void             *sendbuf;
-void             *recvbuf;
-int               count;
-MPI_Datatype      datatype;
-MPI_Op            op;
-MPI_Comm          comm;
+int MPI_Allreduce (MPE_CONST void *sendbuf, void *recvbuf, int count,
+		   MPI_Comm datatype, MPI_Op op, MPI_Comm comm)
 {
   int result;
 
@@ -229,8 +207,7 @@ MPI_Comm          comm;
 /*
     MPI_Barrier - prototyping replacement for MPI_Barrier
 */
-int MPI_Barrier( comm )
-MPI_Comm comm;
+int MPI_Barrier(MPI_Comm comm)
 {
   int result;
 
@@ -246,12 +223,8 @@ MPI_Comm comm;
 /*
     MPI_Isend - prototyping replacement for MPI_Isend
 */
-int MPI_Isend( buf, count, datatype, dest, tag, comm, request )
-const void *buf;
-int count, dest, tag;
-MPI_Datatype datatype;
-MPI_Comm comm;
-MPI_Request *request;
+int MPI_Isend(MPE_CONST void *buf, int count, MPI_Datatype datatype, int dest,
+	      int tag, MPI_Comm comm, MPI_Request *request)
 {
   int result;
 
@@ -267,12 +240,8 @@ MPI_Request *request;
 /*
     MPI_Irecv - prototyping replacement for MPI_Irecv
 */
-int MPI_Irecv( buf, count, datatype, source, tag, comm, request )
-void *buf;
-int count, source, tag;
-MPI_Datatype datatype;
-MPI_Comm comm;
-MPI_Request *request;
+int MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source,
+	      int tag, MPI_Comm comm, MPI_Request *request)
 {
   int result;
 
@@ -287,9 +256,7 @@ MPI_Request *request;
 /*
     MPI_Wait - prototyping replacement for MPI_Wait
 */
-int MPI_Wait( request, status)
-MPI_Request *request;
-MPI_Status *status;
+int MPI_Wait(MPI_Request *request, MPI_Status *status)
 {
   int result;
 
@@ -304,10 +271,7 @@ MPI_Status *status;
 /*
     MPI_Test - prototyping replacement for MPI_Test
 */
-int MPI_Test( request, flag, status )
-MPI_Request *request;
-int *flag;
-MPI_Status *status;
+int MPI_Test(MPI_Request *request, int *flag, MPI_Status *status)
 {
   int result;
 
@@ -324,10 +288,7 @@ MPI_Status *status;
 /*
     MPI_Waitall - prototyping replacement for MPI_Waitall
 */
-int MPI_Waitall( count, requests, statuses )
-int count;
-MPI_Request *requests;
-MPI_Status *statuses;
+int MPI_Waitall(int count, MPI_Request *requests, MPI_Status *statuses)
 {
   int result;
 
@@ -343,15 +304,10 @@ MPI_Status *statuses;
 /*
     MPI_Sendrecv - prototyping replacement for MPI_Sendrecv
 */
-int MPI_Sendrecv( sendbuf, sendcount, sendtype, dest,   sendtag,
-	      recvbuf, recvcount, recvtype, source, recvtag,
-	      comm, status )
-const void *sendbuf;
-void *recvbuf;
-int sendcount, dest, sendtag, source, recvtag, recvcount;
-MPI_Datatype sendtype, recvtype;
-MPI_Comm comm;
-MPI_Status *status;
+int MPI_Sendrecv(MPE_CONST void *sendbuf, int sendcount, MPI_Datatype sendtype,
+		 int dest, int sendtag, void *recvbuf, int recvcount,
+		 MPI_Datatype recvtype, int source, int recvtag,
+		 MPI_Comm comm, MPI_Status *status)
 {
   int result;
 
@@ -368,10 +324,7 @@ MPI_Status *status;
 /*
     MPI_Waitany - prototyping replacement for MPI_Waitany
 */
-int MPI_Waitany( count, array, index, status )
-int count, *index;
-MPI_Request *array;
-MPI_Status *status;
+int MPI_Waitany(int count, MPI_Request *array, int *index, MPI_Status *status)
 {
   int result;
 
@@ -386,11 +339,8 @@ MPI_Status *status;
 /*
     MPI_Ssend - prototyping replacement for MPI_Ssend
 */
-int MPI_Ssend( buf, count, datatype, dest, tag, comm )
-const void *buf;
-int count, dest, tag;
-MPI_Datatype datatype;
-MPI_Comm comm;
+int MPI_Ssend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	      int dest, int tag, MPI_Comm comm)
 {
   int result;
 
@@ -405,14 +355,8 @@ MPI_Comm comm;
 /*
     MPI_Issend - prototyping replacement for MPI_Issend
 */
-int MPI_Issend( buf, count, datatype, dest, tag, comm, request )
-const void *buf;
-int count;
-MPI_Datatype datatype;
-int dest;
-int tag;
-MPI_Comm comm;
-MPI_Request *request;
+int MPI_Issend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
+	       int dest, int tag, MPI_Comm comm, MPI_Request *request)
 {
   int result;
 
@@ -427,11 +371,7 @@ MPI_Request *request;
 /*
    MPI_ Probe- prototyping replacement for MPI_Probe
 */
-int MPI_Probe( source, tag, comm, status )
-int source;
-int tag;
-MPI_Comm comm;
-MPI_Status *status;
+int MPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status)
 {
   int result;
 
@@ -446,12 +386,7 @@ MPI_Status *status;
 /*
     MPI_Iprobe - prototyping replacement for MPI_Iprobe
 */
-int MPI_Iprobe( source, tag, comm, flag, status )
-int source;
-int tag;
-MPI_Comm comm;
-int *flag;
-MPI_Status *status;
+int MPI_Iprobe(int source, int tag, MPI_Comm comm, int *flag, MPI_Status *status)
 {
   int result;
 
@@ -466,7 +401,7 @@ MPI_Status *status;
 /*
     MPI_Finalize - prototyping replacement for MPI_Finalize
 */
-int MPI_Finalize()
+int MPI_Finalize(void)
 {
   MPE_Finish_log( logFileName );
 #ifdef DEBUG

@@ -31,10 +31,7 @@
 #endif
 
 void mpe_comm_global_rank_ ( MPI_Comm *, int *, int *, int * );
-void  mpe_comm_global_rank_( comm, rank, grank, __ierr )
-MPI_Comm *comm;
-int*rank, *grank;
-int *__ierr;
+void  mpe_comm_global_rank_(MPI_Comm *comm, int *rank, int *grank,int * __ierr )
 {
     MPE_Comm_global_rank( *comm,*rank,grank);
 }

@@ -200,11 +200,7 @@ int XBOpenDisplay( XBWindow *XBWin, char *display_name )
 .   nc - number of colors.  Use the maximum of the visual if
     nc == 0.  Use nc = 2 for black and white displays.
     */
-int XBSetVisual( XBWin, q_default_visual, cmap, nc )
-XBWindow *XBWin;
-int      q_default_visual;
-Colormap cmap;
-int      nc;
+int XBSetVisual(XBWindow *XBWin, int q_default_visual, Colormap cmap, int nc)
 {
 if (q_default_visual) {
     XBWin->vis    = DefaultVisual( XBWin->disp, XBWin->screen );
@@ -250,9 +246,7 @@ return 0;
 /* 
    XBSetGC - set the GC structure in the base window
    */
-int XBSetGC( XBWin, fg )
-XBWindow *XBWin;
-PixVal   fg;
+int XBSetGC(XBWindow *XBWin, PixVal fg)
 {
 XGCValues       gcvalues;       /* window graphics context values */
 
@@ -293,11 +287,8 @@ return 0;
     If w and/or h are 0, use the sizes in the fields of XBWin
     (which may have been set by, for example, XBSetWindowSize)
  */
-int XBDisplayWindow( XBWin, label, x, y, w, h, backgnd_pixel )
-XBWindow *XBWin;
-char     *label;
-int      w, h, x, y;
-PixVal   backgnd_pixel;
+int XBDisplayWindow(XBWindow *XBWin, char *label, int x, int y, int w, int h,
+		    PixVal backgnd_pixel)
 {
 unsigned int    wavail, havail;
 XSizeHints      size_hints;
@@ -427,10 +418,8 @@ $ for a 400 x 400 window, and
 $ -geometry +100+200
 $ for a window located at (100,200).
   */
-void XBGetArgs( Argc, argv, flag, px, py, pw, ph )
-int  *Argc, flag;
-char **argv;
-int  *px, *py, *pw, *ph;
+void XBGetArgs(int *Argc, char **argv, int flag, int *px, int *py, int *pw,
+	       int *ph)
 {
     char         val[128];
     int          vallen;
@@ -465,19 +454,14 @@ int  *px, *py, *pw, *ph;
   argument is
 $ -display name
   */
-void XBGetArgsDisplay( Argc, argv, flag, dlen, dname )
-int  *Argc, flag;
-char **argv, *dname;
-int  dlen;
+void XBGetArgsDisplay(int *Argc, char **argv, int flag, int dlen, char *dname)
 {
     ArgGetString( Argc, argv, flag, "-display", dname, dlen );
 }
 
 
-int XBiQuickWindow( mywindow, host, name, x, y, nx, ny, nc )
-XBWindow *mywindow;
-char     *host, *name;
-int      x, y, nx, ny, nc;
+int XBiQuickWindow(XBWindow *mywindow, char *host, char *name,
+		   int x, int y, int nx, int ny, int nc)
 {
     if (XBOpenDisplay( mywindow, host )) {
 	fprintf( stderr, "Could not open display\n" );
@@ -523,10 +507,8 @@ int      x, y, nx, ny, nc;
    A small modification to this routine would allow Black and White windows
    to be used on color displays; this would be useful for testing codes.
    */
-int XBQuickWindow( mywindow, host, name, x, y, nx, ny )
-XBWindow *mywindow;
-char     *host, *name;
-int      x, y, nx, ny;
+int XBQuickWindow(XBWindow *mywindow, char *host, char *name,
+		  int x, int y, int nx, int ny)
 {
 /* Just to be careful, clear mywindow */
     MEMSET( mywindow, 0, sizeof(XBWindow) );
@@ -536,10 +518,7 @@ int      x, y, nx, ny;
 /* 
    And a quick version (from an already defined window) 
  */
-int XBQuickWindowFromWindow( mywindow, host, win )
-XBWindow *mywindow;
-char     *host;
-Window   win;
+int XBQuickWindowFromWindow(XBWindow *mywindow, char *host, Window win)
 {
     Window       root;
     int          d;
@@ -580,8 +559,7 @@ Window   win;
     to the window before flushing the requests.  This is the appropriate
     action for animation.
  */
-void XBFlush( XBWin )
-XBWindow *XBWin;
+void XBFlush(XBWindow *XBWin)
 {
     if (XBWin->drw) {
 	XCopyArea( XBWin->disp, XBWin->drw, XBWin->win, XBWin->gc.set, 0, 0, 
@@ -597,9 +575,7 @@ XBWindow *XBWin;
 .  window - Window to set label for
 .  label  - Label to give window
   */
-void XBSetWindowLabel( XBwin, label )
-XBWindow *XBwin;
-char     *label;
+void XBSetWindowLabel(XBWindow *XBwin, char *label)
 {
     XTextProperty prop;
     XGetWMName(XBwin->disp,XBwin->win,&prop);
@@ -622,9 +598,7 @@ char     *label;
   Be sure that you have XBFlush()'ed the output; X11 does not require that
   the image be current until a flush is executed.
  */
-void XBCaptureWindowToFile( XBWin, fname )
-XBWindow *XBWin;
-char     *fname;
+void XBCaptureWindowToFile(XBWindow *XBWin, char *fname)
 {
 #ifdef HAVE_SYSTEM
     char cmdbuf[1024];

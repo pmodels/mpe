@@ -18,9 +18,7 @@
   Output Parameters:
 . grank - Rank in comm world
 @*/
-void MPE_Comm_global_rank( comm, rank, grank )
-MPI_Comm comm;
-int      rank, *grank;
+void MPE_Comm_global_rank(MPI_Comm comm, int rank, int *grank)
 {
 /* We could cache world_group, at least, but then we'd have no way to
    free it later */
