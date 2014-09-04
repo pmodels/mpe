@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "mpi.h"
 #include "mpe.h"
 #include "pmandel.h"
@@ -292,8 +294,8 @@ Winspecs *winspecs;
 Flags *oldFlags;
 {
   Flags newFlags;
-  char line[1025], *copy, *tok, **argv;
-  int doOneMore, ndrawn, myid, argc;
+  char line[1025], *tok, **argv;
+  int doOneMore, myid, argc;
   xpand_list_Strings *argList;
   FILE *inf;
   int x1,y1,pressed,button;
@@ -323,8 +325,6 @@ Flags *oldFlags;
 #if DEBUG
     fprintf( stderr, "%d opened input file\n", myid );
 #endif
-
-    ndrawn = 0;
 
     while( oldFlags->loop || fgets( line, 1024, inf )) {
       if (oldFlags->loop && !fgets( line, 1024, inf )) {
@@ -401,7 +401,7 @@ MPE_XGraph graph;
 Winspecs *winspecs;
 Flags *flags;
 {
-  int myid, i, drawAnother;
+  int myid, drawAnother;
 
   MPI_Comm_rank( MPI_COMM_WORLD, &myid );
 
@@ -479,7 +479,7 @@ int DragZoom( graph, flags )
 MPE_XGraph graph;
 Flags *flags;
 {
-  int x1, y1, x2, y2, i, myid, button;
+  int x1, y1, x2, y2, i, myid;
   NUM zx1, zy1, zx2, zy2;
   int okay = 1;
   

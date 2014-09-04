@@ -4,9 +4,8 @@
  */
 
 #include <stdio.h>
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
+#include <unistd.h>
 #include <sys/time.h>
 #include "pmandel.h"
 #include "pm_genproc.h"
@@ -350,7 +349,7 @@ Flags *flags;
   MPE_Point *pointData;
   int block_type;
 
-  rect r, rectBuf[2];
+  rect r;
   /* r - the rectangle being calculated */
 
   MPI_Status mesgStatus;

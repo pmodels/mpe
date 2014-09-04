@@ -26,6 +26,8 @@ typedef int Fract_FN(NUM,NUM);
 typedef int Fract_FN();
 #endif
 
+void PrintHelp(char *progName);
+
 #endif
 
 /*  _PM_GENPROC_H_ */

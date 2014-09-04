@@ -4,9 +4,7 @@
  */
 
 #include <stdio.h>
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include "args.h"
 #include "lists.h"
 #include <string.h>
@@ -106,7 +104,7 @@ char **argv, *switchName, **val;
 
 
 
-IsArgPresent( argc, argv, switchName )
+int IsArgPresent( argc, argv, switchName )
 int *argc;
 char **argv, *switchName;
 {

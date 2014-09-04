@@ -30,5 +30,7 @@ int GetStringListArg( );
 #endif
 
 
+int IsArgPresent( int *argc, char **argv, char *switchName );
+
 #endif
 /* _ARGS_H_ */

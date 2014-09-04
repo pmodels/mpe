@@ -4,10 +4,10 @@
  */
 
 
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 #include "mpi.h"
 #include "mpe.h"
 #include "pmandel.h"
@@ -39,7 +39,6 @@ FreeMPITypes()
 void 
 DefineMPITypes()
 {
-  Winspecs winspecs;
   Flags flags;
   rect rectangle;
   MPI_Aint a, b;

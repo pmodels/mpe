@@ -5,9 +5,7 @@
 
 /* general routines for calculating fractals */
 #include <stdio.h>
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include <math.h>
 #include "pmandel.h"
 #include "fract_gen.h"
@@ -332,7 +330,7 @@ int *mainArray, *subArray, mainWidth, mainHeight, subWidth, subHeight,
    If the copy goes outside the bounds of the mainArray, none of the copy is performed
 */
 {
-  int i, j, *ptr, *fromPtr, *toPtr;
+  int i, j, *fromPtr, *toPtr;
 
   if (mainWidth<subWidth+xpos || mainHeight<subHeight+ypos) {   /* make sure we don't overrun */
     return;

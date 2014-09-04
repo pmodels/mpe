@@ -4,9 +4,7 @@
  */
 
 #include <stdio.h>
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include "lists.h"
 
 xpand_list_Strings *Strings_CreateList(initialLen)
