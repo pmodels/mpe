@@ -9,6 +9,8 @@ CP     = @CPRP@
 top_srcdir        = @top_srcdir@
 srcdir            = @srcdir@
 
+VPATH = .:@top_srcdir@
+
 # Build directories
 includebuild_dir  = @includebuild_dir@
 libbuild_dir      = @libbuild_dir@
@@ -194,12 +196,16 @@ owner-clean: clean_bin clean_lib distclean-misc
 	@-$(RM) -f mpe_conf.h.in
 	@-$(RM) -f configure
 
-configure: configure.ac aclocal_core.m4 aclocal_f77.m4 aclocal_make.m4 \
-	aclocal_mpi.m4 aclocal.m4
-	autoheader
-	autoconf
+configure_deps = $(top_srcdir)/configure.ac \
+	$(top_srcdir)/aclocal_core.m4 \
+	$(top_srcdir)/aclocal_f77.m4 \
+	$(top_srcdir)/aclocal_make.m4 \
+	$(top_srcdir)/aclocal_mpi.m4 \
+	$(top_srcdir)/aclocal.m4
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(configure_deps)
+	(cd $(top_srcdir) && ./autogen.sh)
 
-Makefile: configure Makefile.in
+Makefile: $(top_srcdir)/configure $(top_srcdir)/Makefile.in config.status
 	./config.status
 
 # Allow dependencies target
@@ -222,6 +228,7 @@ ctags: tags
 ## TODO: Add support for things like DISTDIR
 DISTDIRS = etc src include cross_spec sbin bin maint
 DISTFILES = INSTALL INSTALL.cross Makefile.in README README.windows \
+        COPYRIGHT \
 	aclocal.m4 aclocal_core.m4 aclocal_f77.m4 aclocal_inttypes.m4 \
 	aclocal_make.m4 aclocal_mpi.m4 autogen.sh fmpe.def mpe.def \
 	mpe.vcproj mpewrap.vcproj configure.ac install-sh config.sub \
@@ -232,6 +239,8 @@ DISTFILES = INSTALL INSTALL.cross Makefile.in README README.windows \
 # for almost every file (!).
 # WARNING: To ensure a clean distribution file, this executes a "distclean"
 # step, which will remove all of the generated files, including this Makefile.
+# The sed on configure.ac changes the default for maintainer mode from on to
+# off
 dist: Makefile
 	@$(MAKE) distclean
 	@if [ ! -d tmp ] ; then mkdir tmp ; \
@@ -239,8 +248,10 @@ dist: Makefile
 	@if [ -d mpe2-@VERSION@ ] ; then \
 	echo "Remove the mpe2-@VERSION@ directory first"; exit 1; fi
 	@if [ -f mpe2-@VERSION@.tgz ] ; then $(RM) -f mpe2-@VERSION@.tgz ; fi
-	for dir in $(DISTDIRS) ; do cp -rp $$dir tmp/$$dir ; done
-	for file in $(DISTFILES) ; do cp -p $$file tmp/$$file ; done
+	for dir in $(DISTDIRS) ; do cp -rp $(top_srcdir)/$$dir tmp/$$dir ; done
+	for file in $(DISTFILES) ; do cp -p $(top_srcdir)/$$file tmp/$$file ; done
+	sed -e 's%useMaintainerMode=yes%useMaintainerMode=no%g' \
+		$(top_srcdir)/configure.ac > tmp/configure.ac
 	(cd tmp && ./autogen.sh)
 	(cd tmp && chmod -R -N *)
 	(cd tmp && find . -name '.gitignore*' -print | xargs $(RM))

@@ -11,6 +11,17 @@ AC_INIT()
 AC_PREREQ(2.52)
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_HEADER(mpe_conf.h)
+
+# Some targets in the Makefile that are used to update the configure script
+# and similar programs can cause trouble for users of a distribution.
+# Following an approach similar to that in Automake, define a
+# maintainer mode that is set to off by default in the distributed version
+MAINTAINER_MODE_TRUE='#'
+AC_ARG_ENABLE([maintainer_mode],[  --enable-maintainer-mode - Include Makefile targets intended for maintainers],[useMaintainerMode=$enable_val],[useMaintainerMode=yes])
+if test $useMaintainerMode = "yes" ; then
+    MAINTAINER_MODE_TRUE=' '
+fi
+AC_SUBST([MAINTAINER_MODE_TRUE])
 #
 echo "Configuring MPE Profiling System with $ac_configure_args"
 dnl
@@ -44,7 +55,7 @@ AC_ARG_ENABLE( softerror,
 , enable_softerror=${mpe_enable_softerror:-no} )
 
 # If you change the version here, make sure you change it in README and INSTALL
-VERSION="2.4.7"
+VERSION="2.4.8"
 AC_SUBST([VERSION])
 dnl Don't preset F77 when MPE is configured with MPICH2 
 dnl otherwise AC_PROG_F77 or other PAC F77 tests could be messed up below.

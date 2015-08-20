@@ -1,7 +1,7 @@
                       MPE (Multi-Processing Environment)
                       ----------------------------------
 
-                          Version 2.4.7. August, 2014
+                          Version 2.4.8. August, 2015
 
                     Mathematics and Computer Science Division
                            Argonne National Laboratory
@@ -212,7 +212,7 @@ Other User Options:
                                 have the X11 include files or that do not
                                 support X11 graphics.  The default enable=yes.
 
---enable-collchk                bild MPI Collective and Datatype
+--enable-collchk                build MPI Collective and Datatype
                                 checking library, libmpe_collchk.a
 
 --enable-slog2[=build]          Configure all the SLOG-2 tools.
@@ -221,6 +221,13 @@ Other User Options:
                                 --enable-slog2=build will rebuild all the
                                 jar files from the source code.
                                 The default is enable=yes.
+
+--enable-maintainer-mode        Intended for developers who may modify the
+                                configure.ac script, this creates a
+                                dependency for configure on the input files
+                                such as configure.ac.  Disabled by default
+                                in the distributed tarball; enabled by default
+                                in the git repository version.
 
 --with-java=JAVA_HOME           Specify the path of the top-level directory 
                                 of the Java, j2sdk, installation.  If this 
