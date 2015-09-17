@@ -55,7 +55,7 @@ AC_ARG_ENABLE( softerror,
 , enable_softerror=${mpe_enable_softerror:-no} )
 
 # If you change the version here, make sure you change it in README and INSTALL
-VERSION="2.4.8"
+VERSION="2.4.9"
 AC_SUBST([VERSION])
 dnl Don't preset F77 when MPE is configured with MPICH2 
 dnl otherwise AC_PROG_F77 or other PAC F77 tests could be messed up below.

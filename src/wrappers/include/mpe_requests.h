@@ -16,9 +16,11 @@ typedef struct request_list_ {
           struct request_list_  *next;
 } request_list;
 
-#define RQ_SEND    0x1
-#define RQ_RECV    0x2
-#define RQ_CANCEL  0x4
+#define RQ_SEND    0x01
+#define RQ_RECV    0x02
+#define RQ_MATCH   0x04
+#define RQ_COMM    0x08
+#define RQ_CANCEL  0x10
 /* 
    if MPI_Cancel is called on a request, 'or' RQ_CANCEL into status.
    After a Wait* or Test* is called on that request, check for RQ_CANCEL.

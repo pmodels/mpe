@@ -328,19 +328,17 @@ const CLOG_CommIDs_t *CLOG_CommSet_add_intracomm( CLOG_CommSet_t *commset,
     return intracommIDs;
 }
 
-/*
-    Assume that "intracomm" be the LOCAL communicator of the "intercomm".
-*/
 const CLOG_CommIDs_t*
 CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
                                   MPI_Comm        intercomm,
-                            const CLOG_CommIDs_t *intracommIDs )
+                            const CLOG_CommIDs_t *commIDs )
 {
     CLOG_CommIDs_t  *intercommIDs;
     CLOG_CommIDs_t  *local_intracommIDs, *remote_intracommIDs;
-    CLOG_CommIDs_t  *orig_intracommIDs, intracommIDs_val;
+    CLOG_CommIDs_t  *orig_commIDs, commIDs_val;
     MPI_Status       status;
     MPI_Request      request;
+    MPI_Comm         localcomm;
     int              is_intercomm;
 
     /* Confirm if input intercomm is really an intercommunicator */
@@ -348,13 +346,28 @@ CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
     if ( !is_intercomm )
         return CLOG_CommSet_add_intracomm( commset, intercomm );
 
+    /* Reconstruct the LOCAL communicator of an intercommunicator */
+    localcomm = commIDs->comm;
+    PMPI_Comm_test_inter( localcomm, &is_intercomm );
+#if !defined( CLOG_NOMPI )
+    if (is_intercomm) {
+        MPI_Group localgroup;
+        MPI_Comm mergecomm;
+        PMPI_Comm_group(intercomm,&localgroup);
+        PMPI_Intercomm_merge(intercomm,0,&mergecomm);
+        PMPI_Comm_create(mergecomm,localgroup,&localcomm);
+        PMPI_Group_free(&localgroup);
+        PMPI_Comm_free(&mergecomm);
+    }
+#endif
+
     /*
        Since CLOG_CommSet_get_new_IDs() may call realloc()
        which may invalidate any CLOG_CommIDs_t pointer,
-       copy the content of input intracommIDs pointer to a local buffer.
+       copy the content of input commIDs pointer to a local buffer.
     */
-    orig_intracommIDs = &intracommIDs_val;
-    memcpy( orig_intracommIDs, intracommIDs, sizeof(CLOG_CommIDs_t) );
+    orig_commIDs = &commIDs_val;
+    memcpy( orig_commIDs, commIDs, sizeof(CLOG_CommIDs_t) );
 
     /* Set the next available table entry in CLOG_CommSet_t with intercomm */
     intercommIDs         = CLOG_CommSet_get_new_IDs( commset, 3 );
@@ -378,10 +391,10 @@ CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
 
     /*
        Broadcast the (local side of) intercomm ID within local intracomm,
-       i.e. orig_intracommIDs->comm
+       i.e. orig_commIDs->comm
     */
     PMPI_Bcast( intercommIDs->global_ID, CLOG_UUID_SIZE, MPI_CHAR,
-                0, orig_intracommIDs->comm );
+                0, localcomm );
 
 #if defined( CLOG_COMMSET_PRINT )
     char uuid_str[CLOG_UUID_STR_SIZE] = {0};
@@ -393,11 +406,14 @@ CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
     /* Set the next available table entry with the LOCAL intracomm's info */
     local_intracommIDs            = intercommIDs + 1;
     local_intracommIDs->kind      = CLOG_COMM_KIND_LOCAL;
-    local_intracommIDs->local_ID  = orig_intracommIDs->local_ID;
-    CLOG_Uuid_copy( orig_intracommIDs->global_ID,
+    local_intracommIDs->local_ID  = orig_commIDs->local_ID;
+    CLOG_Uuid_copy( orig_commIDs->global_ID,
                     local_intracommIDs->global_ID );
-    local_intracommIDs->comm      = orig_intracommIDs->comm;
-    local_intracommIDs->comm_rank = orig_intracommIDs->comm_rank;
+    if (is_intercomm)
+        local_intracommIDs->comm  = MPI_COMM_NULL;
+    else
+        local_intracommIDs->comm  = orig_commIDs->comm;
+    local_intracommIDs->comm_rank = orig_commIDs->comm_rank;
     /* NOTE: LOCAL intracommIDs->comm_rank == intercommIDs->comm_rank */
 
     /* Set the next available table entry with the REMOTE intracomm's info */
@@ -417,7 +433,7 @@ CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
        PMPI_Wait( &request, &status );
     }
     PMPI_Bcast( remote_intracommIDs->global_ID, CLOG_UUID_SIZE, MPI_CHAR,
-                0, orig_intracommIDs->comm );
+                0, localcomm );
     /*
        Since REMOTE intracomm is NOT known or undefinable in LOCAL intracomm,
        (that is why we have intercomm).  Set comm and comm_rank to NULL
@@ -428,6 +444,11 @@ CLOG_CommSet_add_intercomm(       CLOG_CommSet_t *commset,
     /* Set the related CLOG_CommIDs_t* to the local and remote intracommIDs */
     intercommIDs->next              = local_intracommIDs;
     local_intracommIDs->next        = remote_intracommIDs;
+
+#if !defined( CLOG_NOMPI )
+    if (is_intercomm)
+        PMPI_Comm_free(&localcomm);
+#endif
 
     return intercommIDs;
 }

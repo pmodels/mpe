@@ -10,6 +10,15 @@
 #include "mpe_wrappers_conf.h"
 #include "mpe_log.h"
 
+#ifdef MPI_VERSION
+# if MPI_VERSION >= 2 || (MPI_VERSION == 2 && MPI_SUBVERSION >= 2)
+#  define HAVE_MPI_DISTGRAPH /* XXX Add configure test!!! */
+# endif
+# if MPI_VERSION >= 3
+#  define HAVE_MPI_MATCH /* XXX Add configure test!!! */
+#  define HAVE_MPI_COMM30 /* XXX Add configure test!!! */
+# endif
+#endif
 
 /* AIX requires this to be the first thing in the file.  */
 #ifndef __GNUC__
@@ -159,8 +168,20 @@ void MPE_Init_mpi_io( void );
 void MPE_Init_mpi_rma( void );
 #endif
 
+#ifdef HAVE_MPI_DISTGRAPH
+void MPE_Init_mpi_distgraph( void );
+#endif
+
 #ifdef HAVE_MPI_SPAWN
 void MPE_Init_mpi_spawn( void );
+#endif
+
+#ifdef HAVE_MPI_MATCH
+void MPE_Init_mpi_match( void );
+#endif
+
+#ifdef HAVE_MPI_COMM30
+void MPE_Init_mpi_comm30( void );
 #endif
 
 /* define known events' ID, i.e. index to the corresponding event in events[] */
@@ -309,6 +330,7 @@ void MPE_Init_mpi_spawn( void );
 
 #define MPE_ISEND_WAITED_ID 250
 #define MPE_IRECV_WAITED_ID 251
+#define MPE_IMRECV_WAITED_ID 252
 
 #include "mpe_requests.h"
 
@@ -531,6 +553,17 @@ extern MPEU_DLL_SPEC CLOG_CommSet_t  *CLOG_CommSet;
         MPE_LOG_SOLO_EVENT( new_commIDs, THREADID, MPE_COMM_INIT_ID ) \
     }
 
+#define MPE_LOG_COMMCREATE(comm,new_comm) \
+    if ( new_comm != MPI_COMM_NULL ) { \
+        int new_comm_is_inter; \
+        PMPI_Comm_test_inter( new_comm, &new_comm_is_inter); \
+        if (new_comm_is_inter) { \
+            MPE_LOG_INTERCOMM(comm,*comm_out,CLOG_COMM_INTER_CREATE) \
+        } else { \
+            MPE_LOG_INTRACOMM(comm,*comm_out,CLOG_COMM_INTRA_CREATE) \
+        } \
+    }
+
 #define MPE_LOG_ON \
     if (is_thisfn_logged) IS_MPELOG_ON = 1;
 
@@ -687,10 +720,12 @@ void MPE_Req_wait_test(MPI_Request request, MPI_Status *status, char *note,
            Receives conclude at the END of Wait/Test.
            Sends start at the beginning.
         */    
-        if ((rq->status & RQ_RECV) && (status->MPI_SOURCE != MPI_PROC_NULL)) {
+        if ((rq->status & (RQ_RECV|RQ_MATCH)) && (status->MPI_SOURCE != MPI_PROC_NULL)) {
             PMPI_Get_count( status, MPI_BYTE, &size );
             if (is_mpilog_on && is_logging_on && state->is_active) {
-                istate  = &states[MPE_IRECV_WAITED_ID];
+                istate  = (rq->status & RQ_RECV) ?
+                           &states[MPE_IRECV_WAITED_ID] :
+                           &states[MPE_IMRECV_WAITED_ID];
                 if (istate->is_active) {
                     MPE_Log_commIDs_event( rq->commIDs, thdID,
                                            istate->start_evtID, NULL );
@@ -772,6 +807,18 @@ void MPE_Init_states_events( void )
 #ifdef HAVE_MPI_SPAWN
     allow_mask |= MPE_KIND_SPAWN;
     MPE_Init_mpi_spawn();
+#endif
+
+#ifdef HAVE_MPI_MATCH
+    MPE_Init_mpi_match();
+#endif
+
+#ifdef HAVE_MPI_DISTGRAPH
+    MPE_Init_mpi_distgraph();
+#endif
+
+#ifdef HAVE_MPI_COMM30
+    MPE_Init_mpi_comm30();
 #endif
 
     /* The internal flag is always ON */
@@ -1510,6 +1557,12 @@ void MPE_Init_internal_logging( void )
     state = &states[MPE_IRECV_WAITED_ID];
     state->kind_mask = MPE_KIND_INTERNAL;
     state->name = "MPE_Irecv_waited";
+    state->color="DarkOrange";
+    state->format = NULL;
+
+    state = &states[MPE_IMRECV_WAITED_ID];
+    state->kind_mask = MPE_KIND_INTERNAL;
+    state->name = "MPE_Imrecv_waited";
     state->color="DarkOrange";
     state->format = NULL;
 
@@ -2321,7 +2374,7 @@ int   MPI_Comm_dup( MPI_Comm comm, MPI_Comm * comm_out )
 #endif
 
   MPE_LOG_THREAD_LOCK
-  MPE_LOG_INTRACOMM(comm,*comm_out,CLOG_COMM_INTRA_CREATE)
+  MPE_LOG_COMMCREATE(comm,*comm_out)
 
   MPE_LOG_STATE_END(comm,NULL)
   MPE_LOG_THREAD_UNLOCK
@@ -2559,7 +2612,7 @@ int   MPI_Comm_split( MPI_Comm comm, int color, int key, MPI_Comm * comm_out )
 #endif
 
   MPE_LOG_THREAD_LOCK
-  MPE_LOG_INTRACOMM(comm,*comm_out,CLOG_COMM_INTRA_CREATE)
+  MPE_LOG_COMMCREATE(comm,*comm_out)
 
   MPE_LOG_STATE_END(comm,NULL)
   MPE_LOG_THREAD_UNLOCK
@@ -3075,7 +3128,7 @@ int   MPI_Intercomm_merge( MPI_Comm comm, int high, MPI_Comm * comm_out )
 #endif
 
   MPE_LOG_THREAD_LOCK
-  MPE_LOG_INTRACOMM(comm,*comm_out,CLOG_COMM_INTRA_CREATE)
+  MPE_LOG_COMMCREATE(comm,*comm_out)
 
   MPE_LOG_STATE_END(comm,NULL)
   MPE_LOG_THREAD_UNLOCK
@@ -6585,4 +6638,16 @@ int MPI_Pcontrol( const int level, ... )
 
 #ifdef HAVE_MPI_SPAWN
 #include "log_mpi_spawn.c"
+#endif
+
+#ifdef HAVE_MPI_DISTGRAPH
+#include "log_mpi_distgraph.c"
+#endif
+
+#ifdef HAVE_MPI_MATCH
+#include "log_mpi_match.c"
+#endif
+
+#ifdef HAVE_MPI_COMM30
+#include "log_mpi_comm30.c"
 #endif
