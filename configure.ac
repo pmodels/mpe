@@ -1,28 +1,32 @@
-dnl
-dnl Caching is usually WRONG for systems with cross-mounted file systems
-dnl (the cache file may correspond to a different system).  Since configure
-dnl is not on a performance-critical path, go for robustness over speed.
-dnl
-define([AC_CACHE_LOAD], )dnl
-define([AC_CACHE_SAVE], )dnl
-dnl
-dnl
-AC_INIT()
 AC_PREREQ(2.52)
+# Note that we don't have an MPE2 web site, but there is a child page
+# in the perf vis web pages that can serve for the moment.
+# If you change the version here, make sure you change it in README and INSTALL,
+# and (until the configure of subdirs is fixed), the configure.ac files in
+#  src/graphics , src/logging , src/misc , src/wrappers
+#
+AC_INIT([mpe2],[2.4.9a],[wgropp@illinois.edu],[mpe2],
+        [http://www.mcs.anl.gov/research/projects/perfvis/software/MPE/])
+
 AC_CONFIG_AUX_DIR([.])
-AC_CONFIG_HEADER(mpe_conf.h)
+AC_CONFIG_HEADER([mpe_conf.h])
 
 # Some targets in the Makefile that are used to update the configure script
 # and similar programs can cause trouble for users of a distribution.
 # Following an approach similar to that in Automake, define a
 # maintainer mode that is set to off by default in the distributed version
 MAINTAINER_MODE_TRUE='#'
-AC_ARG_ENABLE([maintainer_mode],[  --enable-maintainer-mode - Include Makefile targets intended for maintainers],[useMaintainerMode=$enable_val],[useMaintainerMode=yes])
+AC_ARG_ENABLE([maintainer_mode],
+              [AS_HELP_STRING([--enable-maintainer-mode],
+              [Include Makefile targets intended for maintainers])],
+	      [useMaintainerMode=$enable_val],
+              [useMaintainerMode=yes])
 if test $useMaintainerMode = "yes" ; then
     MAINTAINER_MODE_TRUE=' '
 fi
 AC_SUBST([MAINTAINER_MODE_TRUE])
 #
+# Begin the configuration
 echo "Configuring MPE Profiling System with $ac_configure_args"
 dnl
 dnl  Set top_srcdir_abs to be the ABSOLUTE path to the home directory of MPE
@@ -54,9 +58,6 @@ AC_ARG_ENABLE( softerror,
                                      are used.  The default is enable=no.],
 , enable_softerror=${mpe_enable_softerror:-no} )
 
-# If you change the version here, make sure you change it in README and INSTALL
-VERSION="2.4.9"
-AC_SUBST([VERSION])
 dnl Don't preset F77 when MPE is configured with MPICH2 
 dnl otherwise AC_PROG_F77 or other PAC F77 tests could be messed up below.
 dnl This is especially true when no fortran compiler in PATH.
@@ -558,7 +559,7 @@ AC_ARG_WITH( config-args,
                                      the filename will be assumed to be
                                      $top_srcdir/configargs/<filename>.cfg.], ,
 with_config_args=no )
-dnl
+#
 if test "$with_config_args" != "no" ; then
     case "$with_config_args" in
         /*|../*|./*)
@@ -583,7 +584,6 @@ if test "$with_config_args" != "no" ; then
         AC_MSG_WARN([Non-existent ${config_args_file}.])
     fi
 fi
-
 
 AC_PROG_CC
 dnl Check for broken handling of common symbols

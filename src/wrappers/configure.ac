@@ -1,3 +1,4 @@
+AC_PREREQ(2.52)
 dnl Caching is usually WRONG for systems with cross-mounted file systems
 dnl (the cache file may correspond to a different system).  Since configure
 dnl is not on a performance-critical path, go for robustness over speed.
@@ -5,8 +6,8 @@ dnl
 define([AC_CACHE_LOAD], )dnl
 define([AC_CACHE_SAVE], )dnl
 dnl
-AC_INIT()
-AC_PREREQ(2.52)
+AC_INIT([mpe2],[2.4.9a],[wgropp@illinois.edu],[mpe2],
+        [http://www.mcs.anl.gov/research/projects/perfvis/software/MPE/])
 AC_CONFIG_HEADER(mpe_wrappers_conf.h)
 dnl
 echo "Configuring MPE Wrapper Libraries For MPI with $ac_configure_args"

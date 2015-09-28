@@ -245,9 +245,10 @@ dist: Makefile
 	@$(MAKE) distclean
 	@if [ ! -d tmp ] ; then mkdir tmp ; \
 	else echo "Remove the tmp directory first"; exit 1; fi
-	@if [ -d mpe2-@VERSION@ ] ; then \
-	echo "Remove the mpe2-@VERSION@ directory first"; exit 1; fi
-	@if [ -f mpe2-@VERSION@.tgz ] ; then $(RM) -f mpe2-@VERSION@.tgz ; fi
+	@if [ -d mpe2-@PACKAGE_VERSION@ ] ; then \
+	echo "Remove the mpe2-@PACKAGE_VERSION@ directory first"; exit 1; fi
+	@if [ -f mpe2-@PACKAGE_VERSION@.tgz ] ; then \
+		$(RM) -f mpe2-@PACKAGE_VERSION@.tgz ; fi
 	for dir in $(DISTDIRS) ; do cp -rp $(top_srcdir)/$$dir tmp/$$dir ; done
 	for file in $(DISTFILES) ; do cp -p $(top_srcdir)/$$file tmp/$$file ; done
 	sed -e 's%useMaintainerMode=yes%useMaintainerMode=no%g' \
@@ -255,9 +256,9 @@ dist: Makefile
 	(cd tmp && ./autogen.sh)
 	(cd tmp && chmod -R -N *)
 	(cd tmp && find . -name '.gitignore*' -print | xargs $(RM))
-	mv tmp mpe2-@VERSION@
-	tar zcf mpe2-@VERSION@.tgz mpe2-@VERSION@
-	$(RM) -rf mpe2-@VERSION@
+	mv tmp mpe2-@PACKAGE_VERSION@
+	tar zcf mpe2-@PACKAGE_VERSION@.tgz mpe2-@PACKAGE_VERSION@
+	$(RM) -rf mpe2-@PACKAGE_VERSION@
 
 ################################################################################
 # unimplemented targets that MPICH2's automake may recursively invoke; see

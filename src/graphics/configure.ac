@@ -1,3 +1,4 @@
+AC_PREREQ(2.52)
 dnl
 dnl Caching is usually WRONG for systems with cross-mounted file systems
 dnl (the cache file may correspond to a different system).  Since configure
@@ -7,8 +8,8 @@ define([AC_CACHE_LOAD], )dnl
 define([AC_CACHE_SAVE], )dnl
 dnl
 dnl
-AC_INIT()
-AC_PREREQ(2.52)
+AC_INIT([mpe2],[2.4.9a],[wgropp@illinois.edu],[mpe2],
+        [http://www.mcs.anl.gov/research/projects/perfvis/software/MPE/])
 AC_CONFIG_HEADER(mpe_graphics_conf.h)
 dnl
 echo "Configuring MPE X Graphics Library with $ac_configure_args"
