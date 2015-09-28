@@ -34,7 +34,7 @@ fi
 AC_SUBST([MAINTAINER_MODE_TRUE])
 
 AC_ARG_ENABLE([PIC],
-              [AS_HELP_STRING([--enable-pic],[Add -fPIC for position independent code.  Note not all compilers accept this argument, or use a different argument for specifying that that compiler should generate position independent code.])],
+              [AS_HELP_STRING([--enable-PIC],[Add -fPIC for position independent code.  Note not all compilers accept this argument, or use a different argument for specifying that that compiler should generate position independent code.])],
               [addfPIC=yes],[addfPIC=no])
 
 #
