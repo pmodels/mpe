@@ -11,6 +11,13 @@ AC_INIT([mpe2],[2.4.9a],[wgropp@illinois.edu],[mpe2],
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_HEADER([mpe_conf.h])
 
+# Configure options
+AC_ARG_ENABLE([echo],
+    [AS_HELP_STRING([--enable-echo],
+    [Turn on verbose shell echo when running configure])],
+    [set -x],
+    [set +x])
+
 # Some targets in the Makefile that are used to update the configure script
 # and similar programs can cause trouble for users of a distribution.
 # Following an approach similar to that in Automake, define a
@@ -25,6 +32,11 @@ if test $useMaintainerMode = "yes" ; then
     MAINTAINER_MODE_TRUE=' '
 fi
 AC_SUBST([MAINTAINER_MODE_TRUE])
+
+AC_ARG_ENABLE([PIC],
+              [AS_HELP_STRING([--enable-pic],[Add -fPIC for position independent code.  Note not all compilers accept this argument, or use a different argument for specifying that that compiler should generate position independent code.])],
+              [addfPIC=yes],[addfPIC=no])
+
 #
 # Begin the configuration
 echo "Configuring MPE Profiling System with $ac_configure_args"
@@ -583,6 +595,16 @@ if test "$with_config_args" != "no" ; then
     else
         AC_MSG_WARN([Non-existent ${config_args_file}.])
     fi
+fi
+
+#
+# Before we do anything else, we must set the flags for the compilers if
+# the --enable-PIC option was selected
+if test "$addfPIC" = "yes" ; then
+   CFLAGS="$CFLAGS -fPIC"
+   FFLAGS="$FFLAGS -fPIC"
+   MPI_CFLAGS="$MPI_CFLAGS -fPIC"
+   MPI_FFLAGS="$MPI_FFLAGS -fPIC"
 fi
 
 AC_PROG_CC
