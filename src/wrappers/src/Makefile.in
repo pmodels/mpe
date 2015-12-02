@@ -140,6 +140,11 @@ ${libbuild_dir}/mpe_prof.@OBJEXT@: mpe_prof.@OBJEXT@
 	      $(CP) mpe_prof.@OBJEXT@ ${libbuild_dir} ; \
 	  fi
 
+# Special case for this dependencya
+log_mpi_core.o: log_mpi_core.c log_mpi_comm30.c log_mpi_match.c \
+	log_mpi_distgraph.c log_mpi_io.c
+
+
 #
 # Remove the old libraries before rebuilding (in case they came from another
 # architecture or are otherwise damaged)
