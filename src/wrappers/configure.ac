@@ -342,20 +342,17 @@ fi
 dnl Check if MPI implementation uses const in function declaration
 if test "$enable_checkMPI" = "yes" ; then
     AC_MSG_CHECKING( [for the use of const in MPI function declaration] )
-    PAC_MPI_COMPILE_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], [], [],
-                                 [
+    dnl We can't use PAC_MPI_COMPILE_CC_FUNC, because this wants the *body*
+    dnl of the function, not the entire function.
+    pac_CC_sav=$CC
+    CC=$MPI_CC
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "mpi.h"
 int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
-             int dest, int tag, MPI_Comm comm)
-{
-    return 0;
-}
-                                 ],
-                                 [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
+             int dest, int tag, MPI_Comm comm) {    return 0; }],[return 0;])],
+                                 [ mpe_link_ok=yes ], [ mpe_link_ok=no ])
+    AC_MSG_RESULT([$mpe_link_ok])
     if test "$mpe_link_ok" = "yes" ; then
-        AC_MSG_RESULT(yes)
         AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
-    else
-        AC_MSG_RESULT(no)
     fi
 fi
 
