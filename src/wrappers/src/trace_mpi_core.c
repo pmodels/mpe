@@ -32,7 +32,7 @@ if ( (MPE_Trace_hasBeenInit) && (!MPE_Trace_hasBeenFinished) ) {\
 
 int   MPI_Allgather(MPE_CONST void *sendbuf, int sendcount,
 		    MPI_Datatype sendtype, void *recvbuf, int recvcount, 
-		    int recvtype, MPI_Comm comm)
+		    MPI_Datatype recvtype, MPI_Comm comm)
 {
   int   returnVal;
   int llrank;
@@ -52,7 +52,8 @@ int   MPI_Allgather(MPE_CONST void *sendbuf, int sendcount,
   return returnVal;
 }
 
-int   MPI_Allgatherv(MPE_CONST void *sendbuf, int sendcount, int sendtype,
+int   MPI_Allgatherv(MPE_CONST void *sendbuf, int sendcount,
+		     MPI_Datatype sendtype,
 		     void *recvbuf, MPE_CONST int *recvcounts,
 		     MPE_CONST int *displs, MPI_Datatype recvtype,
 		     MPI_Comm comm)

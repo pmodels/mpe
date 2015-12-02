@@ -557,7 +557,7 @@ int  MPI_Isend(MPE_CONST void *buf, int count, MPI_Datatype datatype,
   return returnVal;
 }
 
-int  MPI_Issend(MPE_CONST void *buf, int count, MPI_Comm datatype, int dest,
+int  MPI_Issend(MPE_CONST void *buf, int count, MPI_Datatype datatype, int dest,
 		int tag, MPI_Comm comm, MPI_Request *request)
 {
   int  returnVal;

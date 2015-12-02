@@ -192,7 +192,7 @@ int MPI_Reduce(MPE_CONST void *sendbuf, void *recvbuf, int count,
    MPI_Allreduce
  */
 int MPI_Allreduce (MPE_CONST void *sendbuf, void *recvbuf, int count,
-		   MPI_Comm datatype, MPI_Op op, MPI_Comm comm)
+		   MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
 {
   int result;
 
