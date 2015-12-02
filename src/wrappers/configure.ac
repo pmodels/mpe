@@ -15,9 +15,16 @@ AH_BOTTOM([
 /* Define MPE_CONST=const if mpi.h uses const in MPI function declaration. */
 #if defined(HAVE_CONST_IN_MPI_DECL) || MPI_VERSION >= 3
 #define MPE_CONST const
+#if defined(HAVE_CONST_IN_MPI1_DECL)
+/* Define MPE_CONST1 if the removed MPI-1 functions incorrectly have const */
+#define MPE_CONST1 const
+#else
+#define MPE_CONST1
+#endif /* HAVE_CONST_IN_MPI1_DECL */
 #else
 #define MPE_CONST
-#endif
+#define MPE_CONST1
+#endif /* HAVE_CONST_IN_MPI_DECL */
 ])
 dnl
 dnl Set top_srcdir_abs to be the ABSOLUTE path to the home directory of MPE
@@ -349,6 +356,33 @@ int MPI_Send(const void *buf, int count, MPI_Datatype datatype,
         AC_DEFINE(HAVE_CONST_IN_MPI_DECL, 1, [Define MPE_CONST to const])
     else
         AC_MSG_RESULT(no)
+    fi
+fi
+
+# Check if the MPI implementation incorrectly uses const in the removed
+# functions: MPI_Type_hindexed, MPI_Type_struct, MPI_Address (and the PMPI
+# versions)
+# (MPICH does this as of 12/2/15, but is expected to correct this error)
+if test "$enable_checkMPI" = "yes" ; then
+    AC_MSG_NOTICE([whether removed MPI-1 routines present:])
+    pac_CC_sav=$CC
+    CC=$MPI_CC
+    AC_CHECK_FUNCS([MPI_Type_hindexed],[have_hindexed=yes],[have_hindexed=no])
+    AC_CHECK_FUNCS([MPI_Type_struct],[have_struct=yes],[have_struct=no])
+    AC_CHECK_FUNCS([MPI_Address],[have_address=yes],[have_address=no])
+    CC=$pac_CC_sav
+    if test "$have_hindexed"="yes" -a "$have_struct"="yes" -a \
+            "$have_address" = "yes" ; then
+        AC_MSG_CHECKING([for incorrect use of const in removed routines])
+	pac_CC_sav=$CC
+	CC=$MPI_CC
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "mpi.h"
+int MPI_Address(const void *v, MPI_Aint *add) { *add = 0; }],[return 0;])],[has_wrong_const=yes],[has_wrong_const=no])
+	CC=$pac_CC_sav
+	AC_MSG_RESULT([$has_wrong_const])
+	if test "$has_wrong_const" = "yes" ; then
+	    AC_DEFINE(HAVE_CONST_IN_MPI1_DECL,1,[Define is removed MPI-1 routines have const in the declarations])
+        fi
     fi
 fi
 

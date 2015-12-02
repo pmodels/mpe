@@ -3877,7 +3877,7 @@ double  MPI_Wtime( void )
 }
 #endif
 
-int  MPI_Address( MPE_CONST void * location, MPI_Aint * address )
+int  MPI_Address( MPE_CONST1 void * location, MPI_Aint * address )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
@@ -5490,8 +5490,8 @@ int   MPI_Type_free(MPI_Datatype *datatype)
   return returnVal;
 }
 
-int  MPI_Type_hindexed(int count, MPE_CONST int *blocklens,
-                       MPE_CONST MPI_Aint *indices,
+int  MPI_Type_hindexed(int count, MPE_CONST1 int *blocklens,
+                       MPE_CONST1 MPI_Aint *indices,
                        MPI_Datatype old_type, MPI_Datatype *newtype)
 {
   int  returnVal;
@@ -5661,9 +5661,9 @@ int   MPI_Type_size(MPI_Datatype datatype, int *size)
   return returnVal;
 }
 
-int  MPI_Type_struct(int count, MPE_CONST int *blocklens,
-                     MPE_CONST MPI_Aint *indices,
-                     MPE_CONST MPI_Datatype *old_types, MPI_Datatype *newtype )
+int  MPI_Type_struct(int count, MPE_CONST1 int *blocklens,
+                     MPE_CONST1 MPI_Aint *indices,
+                     MPE_CONST1 MPI_Datatype *old_types, MPI_Datatype *newtype )
 {
   int  returnVal;
   MPE_LOG_STATE_DECL
