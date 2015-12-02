@@ -4,7 +4,7 @@
 */
 
 #define MPE_REQ_ADD_COMM(request,comm,comm_out) \
-      MPE_Req_add_match( request, comm, comm_out, commIDs );
+      MPE_Req_add_comm( request, comm, comm_out, commIDs );
 
 void MPE_Req_add_comm( request, comm, comm_out, commIDs)
       MPI_Request     request;
@@ -184,7 +184,7 @@ int MPI_Comm_idup( MPI_Comm comm, MPI_Comm *comm_out, MPI_Request *request)
   MPE_LOG_THREAD_LOCK
   if (returnVal == MPI_SUCCESS) {
     MPE_LOG_COMMCREATE(comm,*comm_out)
-    MPE_REQ_ADD_COMM( *request, comm, *comm_out )
+    MPE_REQ_ADD_COMM( *request, comm, comm_out )
   }
 
   MPE_LOG_STATE_END(comm,NULL)
