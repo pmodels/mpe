@@ -6,7 +6,7 @@ dnl
 define([AC_CACHE_LOAD], )dnl
 define([AC_CACHE_SAVE], )dnl
 dnl
-AC_INIT([mpe2],[2.4.9a],[wgropp@illinois.edu],[mpe2],
+AC_INIT([mpe2],[2.4.9b],[wgropp@illinois.edu],[mpe2],
         [http://www.mcs.anl.gov/research/projects/perfvis/software/MPE/])
 AC_CONFIG_HEADER(mpe_wrappers_conf.h)
 dnl
