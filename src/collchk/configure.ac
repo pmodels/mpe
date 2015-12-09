@@ -256,7 +256,7 @@ if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
         PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, ,
                               [
     int itmp, err_class, err_code;
-    char err_str[]="test";
+    char *err_str="test";
                               ],
                               [
     itmp=MPI_Add_error_class( &err_class );
