@@ -70,7 +70,7 @@ AC_ARG_ENABLE( softerror,
                                      are used.  The default is enable=no.],
 , enable_softerror=${mpe_enable_softerror:-no} )
 
-dnl Don't preset F77 when MPE is configured with MPICH2 
+dnl Don't preset F77 when MPE is configured with MPICH2
 dnl otherwise AC_PROG_F77 or other PAC F77 tests could be messed up below.
 dnl This is especially true when no fortran compiler in PATH.
 if test "$FROM_MPICH2" != "yes" ; then
@@ -94,7 +94,7 @@ PAC_MAKE_IS_BSD44
 PAC_MAKE_IS_OSF
 PAC_MAKE_VPATH
 AC_SUBST(MAKE)
- 
+
 dnl If we are relying on vpath and no vpath is set, then we must exit
 if test ! -s include/mpe.h -a -z "$VPATH" ; then
     AC_MSG_ERROR( [No virtual MAKE path command found.
@@ -232,7 +232,7 @@ if test "$enable_g" = "yes" ; then
               ;;  # Avoid duplication, do nothing
            *)
               # Split eval command into 2 lines so
-              # vi's hightlight mode won't get confused. 
+              # vi's hightlight mode won't get confused.
               flagcmd="$flagname=\"$flagvalue -g\""
               eval ${flagcmd}
               ;;
@@ -292,7 +292,7 @@ AC_ARG_WITH( mpicc,
                                      means no need to set --with-mpiinc
                                      and --with-mpilibs.],
 MPI_CC="$withval" )
- 
+
 AC_ARG_WITH( mpif77,
 [--with-mpif77=MPI_F77              - Fortran compiler for MPI program,
                                      e.g. mpixlf77_r for BG/P MPI, or
@@ -301,7 +301,7 @@ AC_ARG_WITH( mpif77,
                                      means no need to set --with-mpiinc
                                      and --with-mpilibs.],
 MPI_F77="$withval" )
- 
+
 AC_ARG_WITH( mpiinc,
 [--with-mpiinc=MPI_INC              - MPI include path prefixed with -I.
                                      It specifies MPI header files location,
@@ -312,7 +312,7 @@ AC_ARG_WITH( mpiinc,
                                      explicitly set in MPI_CFLAGS and
                                      MPI_FFLAGS without setting --with-mpiinc.],
 MPI_INC="$withval" )
- 
+
 AC_ARG_WITH( mpilibs,
 [--with-mpilibs=MPI_LIBS            - MPI library flags with -L and -l.
                                      It specifies the location of the MPI
@@ -371,7 +371,7 @@ AC_ARG_ENABLE( callstack,
 
 dnl
 AC_ARG_ENABLE( logging,
-[--enable-logging                   - Build MPE logging routines for 
+[--enable-logging                   - Build MPE logging routines for
                                      CLOG-2, e.g.  MPE_Log_xxx()...
                                      The default enable=yes.],
 , enable_logging=yes )
@@ -387,7 +387,7 @@ dnl  src/wrappers requires at least src/logging
 if test "$enable_wrappers" = "yes" ; then
     if test "$enable_logging" != "yes" ; then
         enable_logging=yes
-        AC_MSG_WARN( [Enabling Logging which is required by Wrappers.] ); 
+        AC_MSG_WARN( [Enabling Logging which is required by Wrappers.] );
     fi
 fi
 
@@ -411,14 +411,14 @@ if test "$enable_graphics" = "yes" -a "$enable_misc" != "yes" ; then
 fi
 
 AC_ARG_ENABLE( collchk,
-[--enable-collchk                   - Build MPI Collective and Datatype 
+[--enable-collchk                   - Build MPI Collective and Datatype
                                      checking library, libmpe_collchk.a],
 , enable_collchk=yes )
 dnl  src/collchk requires at least src/callstack
 if test "$enable_collchk" = "yes" ; then
     if test "$enable_callstack" != "yes" ; then
         enable_callstack=yes
-        AC_MSG_WARN( [Enabling CallStack which is required by CollChk.] ); 
+        AC_MSG_WARN( [Enabling CallStack which is required by CollChk.] );
     fi
 fi
 
@@ -564,7 +564,7 @@ dnl
 AC_ARG_WITH( config-args,
 [--with-config-args=filename        - Specify configure argument file that
                                      contains the values of variables that
-                                     configure reads, e.g. CC, CFLAGS, 
+                                     configure reads, e.g. CC, CFLAGS,
                                      F77, FFLAGS, MPI_CC, MPI_F77....
                                      If the filename does not begin with
                                      / (absolute path), . or .. (relative path),
@@ -624,7 +624,7 @@ if test "$FROM_MPICH2" != "yes" ; then
     fi
 fi
 
-dnl  MPI_CC is only use for MPI programs.  
+dnl  MPI_CC is only use for MPI programs.
 dnl  CC should be the same compiler that is used within the MPI_CC
 dnl  environment.  MPI_LIBS should also be set for linking MPI programs
 PAC_PROG_MPICC
@@ -654,13 +654,13 @@ if test "$MPE_BUILD_FORTRAN2C" = "yes" ; then
     if test -n "$MPIFORT" -a -z "$MPI_F77" ; then
         MPI_F77=$MPIFORT
     fi
-    AC_MSG_CHECKING( whether MPI_F77 has been set )
+    AC_MSG_CHECKING([whether MPI_F77 has been set])
     if test -z "$MPI_F77" ; then
-        # FIXME: Temporary for F77 accepting the same flags as CC for 
+        # FIXME: Temporary for F77 accepting the same flags as CC for
         # file includes
         MPI_F77="$F77 $MPICPPFLAGS"
     fi
-    AC_MSG_RESULT( $MPI_F77 )
+    AC_MSG_RESULT([$MPI_F77])
 fi
 
 # Determine the name of the various library being built
@@ -680,9 +680,9 @@ if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
         PAC_MPI_LINK_CC_FUNC( $MPI_CC, [$MPI_CFLAGS], $MPI_LIBS, , , ,
                               [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
         if test "$mpe_link_ok" = "yes" ; then
-            AC_MSG_RESULT(yes)
+            AC_MSG_RESULT([yes])
         else
-            AC_MSG_RESULT(no)
+            AC_MSG_RESULT([no])
             PAC_MSG_ERROR( $enable_softerror,
                            [Cannot link with basic MPI C program!
 	Check your MPI include paths, MPI libraries and MPI CC compiler] )
@@ -698,9 +698,9 @@ if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
         ],
         [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
         if test "$mpe_link_ok" = "yes" ; then
-            AC_MSG_RESULT(yes)
+            AC_MSG_RESULT([yes])
         else
-            AC_MSG_RESULT(no)
+            AC_MSG_RESULT([no])
             PAC_MSG_ERROR( $enable_softerror,
                            [Cannot link with basic MPI F77 program!
 	Check your MPI include paths, MPI libraries and MPI F77 compiler ] )
@@ -720,10 +720,10 @@ if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
                               [ d=MPI_Wtime() ],
                               [ mpe_link_ok=yes ], [ mpe_link_ok=no ] )
         if test "$mpe_link_ok" = "yes" ; then
-            AC_MSG_RESULT(yes)
-            AC_DEFINE( HAVE_MPI_WTIME,1,[Define if MPI_Wtime available] )
+            AC_MSG_RESULT([yes])
+            AC_DEFINE([HAVE_MPI_WTIME],1,[Define if MPI_Wtime available] )
         else
-            AC_MSG_RESULT(no)
+            AC_MSG_RESULT([no])
             PAC_MSG_ERROR( $enable_softerror, [Cannot link with MPI_Wtime()!
 	Check your MPI include paths, MPI libraries and MPI CC compiler ] )
         fi
@@ -734,8 +734,8 @@ if test -z "$CC" -o -z "$MPI_CC"; then
     PAC_MSG_ERROR( $enable_softerror,
                    [You must configure MPE with a specific MPI] )
 fi
- 
-if test -n "$F77" -a "$MPE_BUILD_FORTRAN2C" = "yes" ; then 
+
+if test -n "$F77" -a "$MPE_BUILD_FORTRAN2C" = "yes" ; then
     FLIBS_save="$FLIBS"
     FLIBS=""
     AC_F77_LIBRARY_LDFLAGS
@@ -839,7 +839,7 @@ dnl "precious" AC_SUBST(MPI_LIBS)
 dnl "precious" AC_SUBST(LDFLAGS)
 dnl "precious" AC_SUBST(MPERUN)
 
-dnl  Make the directories that do not contain Makefiles (should they?) but 
+dnl  Make the directories that do not contain Makefiles (should they?) but
 dnl  are needed for the subsequent directories.
 $RM -f $srcdir/mpe_conf.h
 
