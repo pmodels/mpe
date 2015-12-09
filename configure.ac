@@ -75,9 +75,9 @@ dnl otherwise AC_PROG_F77 or other PAC F77 tests could be messed up below.
 dnl This is especially true when no fortran compiler in PATH.
 if test "$FROM_MPICH2" != "yes" ; then
     CC=${CC:-cc}
-    F77=${F77:-f77}
+#    F77=${F77:-f77}
     CFLAGS=${CFLAGS}
-    FFLAGS=${FFLAGS}
+#    FFLAGS=${FFLAGS}
 fi
 MPE_LIBNAME=""
 
@@ -627,16 +627,32 @@ fi
 dnl  MPI_CC is only use for MPI programs.  
 dnl  CC should be the same compiler that is used within the MPI_CC
 dnl  environment.  MPI_LIBS should also be set for linking MPI programs
-AC_MSG_CHECKING( whether MPI_CC has been set )
-if test -z "$MPI_CC" ; then
-    MPI_CC="$CC $MPICPPFLAGS"
+PAC_PROG_MPICC
+if test -n "$MPICC" ; then
+    MPI_CC=$MPICC
 fi
-AC_MSG_RESULT( $MPI_CC )
+dnl AC_MSG_CHECKING( whether MPI_CC has been set )
+if test -z "$MPI_CC" ; then
+     MPI_CC="$CC $MPICPPFLAGS"
+fi
+dnl AC_MSG_RESULT( $MPI_CC )
 
 if test "$MPE_BUILD_FORTRAN2C" = "yes" ; then
+    AC_PROG_FC
+    if test -n "$FC" -a -z "$F77" ; then
+        F77=$FC
+    fi
+    dnl Include invocation of the F77 check so that configure doesn't try
+    dnl to check for F77 later.  This is a temporary fix - the long term
+    dnl plan is to switch to MPIFORT/FC as the MPI Fortran/Fortran choices
     AC_PROG_F77
     if test "x$F77" = "x" ; then
         MPE_BUILD_FORTRAN2C=no
+    fi
+    PAC_PROG_MPIFORT
+    dnl - Use MPIFORT to fill in MPI_F77 if not already set
+    if test -n "$MPIFORT" -a -z "$MPI_F77" ; then
+        MPI_F77=$MPIFORT
     fi
     AC_MSG_CHECKING( whether MPI_F77 has been set )
     if test -z "$MPI_F77" ; then
