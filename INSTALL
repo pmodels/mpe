@@ -282,6 +282,13 @@ III. b) Configuring as part of an existing MPI implementation
 The following are some examples for configuring MPE for an existing
 MPI implementation.
 
+For some MPI implementations,
+
+    ./configure
+
+may be sufficient.  If this configure fails, it may be necessary to specify
+some specific options.  Some common cases are described below.
+
 For SGI MPI, e.g. denali.mcs.anl.gov, do the following for default ABI, -n32
 
     setenv MAKE gmake
