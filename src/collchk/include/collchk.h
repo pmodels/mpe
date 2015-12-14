@@ -22,7 +22,7 @@
 #if ! defined( HAVE_MPI_ERR_FNS )
 int MPI_Add_error_class(int *errorclass);
 int MPI_Add_error_code(int errorclass, int *errorcode);
-int MPI_Add_error_string(int errorcode, char *string);
+int MPI_Add_error_string(int errorcode, const char *string);
 int MPI_Comm_call_errhandler(MPI_Comm comm, int errorcode);
 #endif
 
