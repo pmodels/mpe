@@ -728,6 +728,48 @@ if test "$MPI_IMPL" != "MPICH" -a "$MPI_IMPL" != "MPICH2" ; then
 	Check your MPI include paths, MPI libraries and MPI CC compiler ] )
         fi
     fi
+
+    if test "$enable_checkMPI" = "yes" ; then
+        # In some environments, the PMPI interface is used by default, e.g.,
+	# for Darshan I/O monitoring.  We check whether we can link a program
+	# that defines the MPI_Init and MPI_Finalize routines
+        AC_MSG_CHECKING([whether the MPI Profiling interface is usable])
+        pac_saved_CC="$CC"
+        pac_saved_CFLAGS="$CFLAGS"
+        pac_saved_LIBS="$LIBS"
+        # set the parallel compiler environment
+        AC_LANG_PUSH([C])
+        CC="$pac_MPI_CC"
+        CFLAGS="$pac_MPI_CFLAGS"
+        LIBS="$pac_MPI_LIBS"
+        AC_LINK_IFELSE([
+        AC_LANG_PROGRAM([
+#include "mpi.h"
+int MPI_Send(const void *a, int c, MPI_Datatype d, int dest, int tag,
+             MPI_Comm cm)
+{
+    return MPI_SUCCESS;
+}
+int MPI_Init(int *argc, char ***argv)
+{
+    PMPI_Init(argc,argv);
+}
+        ],[
+     MPI_Init(0,0);
+     MPI_Send((void*)0, 0, MPI_BYTE, 0, 0, MPI_COMM_WORLD);
+     MPI_Finalize();
+     return 0;
+        ])
+    ],[pac_pmpi_works=yes],[pac_pmpi_works=no])
+        CC="$pac_saved_CC"
+        CFLAGS="$pac_saved_CFLAGS"
+        LIBS="$pac_saved_LIBS"
+        AC_LANG_POP([C])
+        AC_MSG_RESULT([$pac_pmpi_works])
+        if test "$pac_pmpi_works" != "yes" ; then
+            AC_MSG_ERROR([Cannot link when using MPI Profiling interface!])
+        fi
+     fi
 fi
 
 if test -z "$CC" -o -z "$MPI_CC"; then
