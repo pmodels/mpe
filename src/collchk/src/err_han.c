@@ -12,7 +12,7 @@ int MPI_Add_error_class(int *errorclass)
 int MPI_Add_error_code(int errorclass, int *errorcode)
 { return MPI_SUCCESS; }
 
-int MPI_Add_error_string(int errorcode, char *string)
+int MPI_Add_error_string(int errorcode, const char *string)
 {
     fprintf(stderr, "%s", string);
     fflush(stderr);
